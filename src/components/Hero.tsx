@@ -5,7 +5,7 @@ import FloatingFood3D from "./FloatingFood3D";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-secondary/20" />
       
