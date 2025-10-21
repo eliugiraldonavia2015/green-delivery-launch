@@ -18,7 +18,7 @@ const AnimatedSphere = () => {
 
 const FloatingFood3D = () => {
   return (
-    <div className="w-full h-[400px] cursor-grab active:cursor-grabbing">
+    <div className="w-full h-full cursor-grab active:cursor-grabbing">
       <Canvas camera={{ position: [0, 0, 5] }}>
         <Suspense fallback={null}>
           <ambientLight intensity={0.5} />

@@ -24,17 +24,17 @@ const steps = [
 const HowItWorks = () => {
   return (
     <section className="py-24 relative">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Así de <span className="text-primary">simple</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             En solo 3 pasos, tu comida está en camino
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-12 relative">
+        <div className="grid md:grid-cols-3 gap-8 sm:gap-10 md:gap-12 relative">
           {/* Connection line */}
           <div className="hidden md:block absolute top-20 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           
@@ -46,18 +46,18 @@ const HowItWorks = () => {
             >
               <div className="text-center">
                 {/* Number badge */}
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 border-2 border-primary mb-6 relative z-10">
-                  <span className="text-2xl font-bold text-primary">{step.number}</span>
+                <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/20 border-2 border-primary mb-4 sm:mb-6 relative z-10">
+                  <span className="text-xl sm:text-2xl font-bold text-primary">{step.number}</span>
                 </div>
                 
                 {/* Icon */}
-                <div className="mb-6 inline-flex p-6 rounded-2xl bg-card border border-border shadow-lg">
-                  <step.icon className="h-12 w-12 text-primary" />
+                <div className="mb-4 sm:mb-6 inline-flex p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-card border border-border shadow-lg">
+                  <step.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
                 </div>
                 
                 {/* Content */}
-                <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
-                <p className="text-muted-foreground">{step.description}</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{step.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground px-4">{step.description}</p>
               </div>
             </div>
           ))}

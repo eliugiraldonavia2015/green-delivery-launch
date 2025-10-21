@@ -30,38 +30,38 @@ const Join = () => {
       {/* Decorative glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
       
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16 animate-fade-in">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/20 rounded-full mb-6">
-            <span className="text-primary font-semibold">Únete a Nosotros</span>
+            <span className="text-primary font-semibold text-sm sm:text-base">Únete a Nosotros</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Forma parte de la{" "}
             <span className="text-primary">revolución</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Estamos buscando personas apasionadas que quieran crecer con nosotros
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {opportunities.map((opportunity, index) => (
             <div
               key={index}
-              className="group p-8 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-glow animate-fade-in"
+              className="group p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-glow animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="mb-6 inline-flex p-4 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                <opportunity.icon className="h-10 w-10 text-primary" />
+              <div className="mb-4 sm:mb-6 inline-flex p-3 sm:p-4 rounded-lg sm:rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                <opportunity.icon className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
               </div>
               
-              <h3 className="text-2xl font-bold mb-3">{opportunity.title}</h3>
-              <p className="text-muted-foreground mb-6">{opportunity.description}</p>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{opportunity.title}</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">{opportunity.description}</p>
               
-              <ul className="space-y-2 mb-6">
+              <ul className="space-y-2 mb-4 sm:mb-6">
                 {opportunity.benefits.map((benefit, i) => (
-                  <li key={i} className="flex items-center text-sm text-muted-foreground">
+                  <li key={i} className="flex items-center text-xs sm:text-sm text-muted-foreground">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2" />
                     {benefit}
                   </li>
@@ -76,9 +76,9 @@ const Join = () => {
         </div>
         
         {/* CTA Section */}
-        <div className="text-center p-12 rounded-3xl bg-gradient-to-br from-primary/10 via-card to-transparent border border-primary/20 animate-fade-in">
-          <h3 className="text-3xl font-bold mb-4">¿Listo para dar el siguiente paso?</h3>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+        <div className="text-center p-8 sm:p-12 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary/10 via-card to-transparent border border-primary/20 animate-fade-in">
+          <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">¿Listo para dar el siguiente paso?</h3>
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
             Envíanos tu CV y cuéntanos por qué quieres formar parte de nuestro equipo
           </p>
           <Button size="lg" className="bg-primary hover:bg-primary-glow text-primary-foreground shadow-glow hover:shadow-glow-lg">
