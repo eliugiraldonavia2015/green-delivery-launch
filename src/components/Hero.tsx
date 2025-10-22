@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-delivery.jpg";
-import FloatingFood3D from "./FloatingFood3D";
 
 const Hero = () => {
   return (
@@ -37,7 +36,7 @@ const Hero = () => {
                 Descargar App
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 text-foreground text-base sm:text-lg w-full sm:w-auto">
+              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-base sm:text-lg w-full sm:w-auto transition-all hover:scale-105">
                 Ver restaurantes
               </Button>
             </div>
@@ -60,25 +59,15 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Right image + 3D element */}
-          <div className="relative animate-fade-in space-y-4 sm:space-y-6 lg:space-y-8" style={{ animationDelay: '0.2s' }}>
+          {/* Right image */}
+          <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-2xl sm:rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30 rounded-2xl sm:rounded-3xl blur-3xl animate-pulse" />
               <img 
                 src={heroImage} 
-                alt="App de delivery moderna" 
-                className="relative rounded-2xl sm:rounded-3xl shadow-2xl animate-float w-full h-auto"
+                alt="App de delivery moderna mostrando interfaz intuitiva y rápida para pedir comida" 
+                className="relative rounded-2xl sm:rounded-3xl shadow-2xl animate-float w-full h-auto hover:scale-105 transition-transform duration-500"
               />
-            </div>
-            
-            {/* 3D Element */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-primary/20 bg-card/50 backdrop-blur-sm">
-              <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
-                <FloatingFood3D />
-              </div>
-              <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 text-xs sm:text-sm text-muted-foreground">
-                Arrastra para rotar ↻
-              </div>
             </div>
           </div>
         </div>
