@@ -7,6 +7,9 @@ import {
   Home, Bell, ShoppingCart, MessageSquare, User, 
   Heart, Share2, Bookmark, Music, Flame, Plus 
 } from "lucide-react";
+import LoadingScreen from "@/components/LoadingScreen";
+import RestaurantProfile from "@/components/RestaurantProfile";
+import RestaurantMenu from "@/components/RestaurantMenu";
 
 interface Video {
   id: number;
@@ -28,7 +31,7 @@ const mockVideos: Video[] = [
     likes: 12500,
     comments: 340,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=taco",
-    videoUrl: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&h=1000&fit=crop"
   },
   {
     id: 2,
@@ -38,7 +41,7 @@ const mockVideos: Video[] = [
     likes: 18200,
     comments: 520,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=pizza",
-    videoUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=1000&fit=crop"
   },
   {
     id: 3,
@@ -48,7 +51,7 @@ const mockVideos: Video[] = [
     likes: 25300,
     comments: 680,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=sushi",
-    videoUrl: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600&h=1000&fit=crop"
   },
   {
     id: 4,
@@ -58,7 +61,7 @@ const mockVideos: Video[] = [
     likes: 31400,
     comments: 890,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=burger",
-    videoUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=1000&fit=crop"
   },
   {
     id: 5,
@@ -68,7 +71,7 @@ const mockVideos: Video[] = [
     likes: 21800,
     comments: 450,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=pasta",
-    videoUrl: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=1000&fit=crop"
   },
   {
     id: 6,
@@ -78,7 +81,7 @@ const mockVideos: Video[] = [
     likes: 19500,
     comments: 380,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=dessert",
-    videoUrl: "https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=600&h=1000&fit=crop"
   },
   {
     id: 7,
@@ -88,7 +91,7 @@ const mockVideos: Video[] = [
     likes: 28700,
     comments: 720,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=ramen",
-    videoUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&h=1000&fit=crop"
   },
   {
     id: 8,
@@ -98,7 +101,7 @@ const mockVideos: Video[] = [
     likes: 23400,
     comments: 610,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=wings",
-    videoUrl: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=600&h=1000&fit=crop"
   },
   {
     id: 9,
@@ -108,7 +111,7 @@ const mockVideos: Video[] = [
     likes: 16200,
     comments: 290,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=smoothie",
-    videoUrl: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&h=1000&fit=crop"
   },
   {
     id: 10,
@@ -118,9 +121,21 @@ const mockVideos: Video[] = [
     likes: 34500,
     comments: 980,
     profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=bbq",
-    videoUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=800&fit=crop"
+    videoUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=1000&fit=crop"
   }
 ];
+
+const mockRestaurant = {
+  name: "Tacos El Rey",
+  username: "@tacoselrey",
+  location: "CDMX, México",
+  category: "Comida Mexicana",
+  coverImage: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&h=400&fit=crop",
+  profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=taco",
+  followers: 45200,
+  rating: 4.8,
+  description: "Los auténticos tacos al pastor de la ciudad. Receta familiar desde 1985. Disfruta de la tradición en cada bocado 🌮✨"
+};
 
 const Feed = () => {
   const navigate = useNavigate();
@@ -129,7 +144,14 @@ const Feed = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [liked, setLiked] = useState<number[]>([]);
   const [following, setFollowing] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [highlightedDish, setHighlightedDish] = useState<number | undefined>();
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isScrolling = useRef(false);
+  const scrollTimeout = useRef<NodeJS.Timeout>();
 
   const handleRedirect = () => {
     navigate("/home");
@@ -153,32 +175,193 @@ const Feed = () => {
     );
   };
 
+  // Loading simulation
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = videoRefs.current.findIndex(ref => ref === entry.target);
-            if (index !== -1) {
-              setCurrentVideo(index);
-            }
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Snap scroll logic
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      isScrolling.current = true;
+      
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+
+      scrollTimeout.current = setTimeout(() => {
+        isScrolling.current = false;
+        
+        // Find the video that's most visible
+        let maxVisibility = 0;
+        let targetIndex = 0;
+        
+        videoRefs.current.forEach((ref, index) => {
+          if (!ref) return;
+          
+          const rect = ref.getBoundingClientRect();
+          const visibility = Math.min(
+            window.innerHeight,
+            rect.bottom
+          ) - Math.max(0, rect.top);
+          
+          const visibilityPercent = visibility / window.innerHeight;
+          
+          if (visibilityPercent > maxVisibility) {
+            maxVisibility = visibilityPercent;
+            targetIndex = index;
           }
         });
-      },
-      { threshold: 0.8 }
-    );
 
-    videoRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
+        // Snap if scrolled more than 70%
+        if (maxVisibility > 0.7 || maxVisibility < 0.3) {
+          videoRefs.current[targetIndex]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          setCurrentVideo(targetIndex);
+        }
+      }, 150);
+    };
 
-    return () => observer.disconnect();
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+    };
   }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (showProfile) {
+    return (
+      <RestaurantProfile
+        restaurant={mockRestaurant}
+        onBack={() => setShowProfile(false)}
+        onOpenMenu={() => {
+          setShowProfile(false);
+          setShowMenu(true);
+        }}
+        onFollow={() => {}}
+        onMessage={handleRedirect}
+        isFollowing={following.includes(1)}
+      />
+    );
+  }
+
+  if (showMenu) {
+    return (
+      <RestaurantMenu
+        restaurant={mockRestaurant}
+        onBack={() => setShowMenu(false)}
+        onCheckout={handleRedirect}
+        highlightedDishId={highlightedDish}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
+      {/* Desktop: Vertical phone container with black sidebars */}
+      <div className="hidden md:flex h-full items-center justify-center">
+        <div className="relative w-full max-w-[450px] h-full bg-black shadow-2xl">
+          <FeedContent
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            mockVideos={mockVideos}
+            videoRefs={videoRefs}
+            containerRef={containerRef}
+            currentVideo={currentVideo}
+            liked={liked}
+            following={following}
+            handleLike={handleLike}
+            handleFollow={handleFollow}
+            handleRedirect={handleRedirect}
+            setIsCartOpen={setIsCartOpen}
+            isCartOpen={isCartOpen}
+            setShowProfile={setShowProfile}
+            setShowMenu={setShowMenu}
+            setHighlightedDish={setHighlightedDish}
+          />
+        </div>
+      </div>
+
+      {/* Mobile: Full screen */}
+      <div className="md:hidden h-full">
+        <FeedContent
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          mockVideos={mockVideos}
+          videoRefs={videoRefs}
+          containerRef={containerRef}
+          currentVideo={currentVideo}
+          liked={liked}
+          following={following}
+          handleLike={handleLike}
+          handleFollow={handleFollow}
+          handleRedirect={handleRedirect}
+          setIsCartOpen={setIsCartOpen}
+          isCartOpen={isCartOpen}
+          setShowProfile={setShowProfile}
+          setShowMenu={setShowMenu}
+          setHighlightedDish={setHighlightedDish}
+        />
+      </div>
+    </div>
+  );
+};
+
+interface FeedContentProps {
+  activeTab: "following" | "foryou";
+  setActiveTab: (tab: "following" | "foryou") => void;
+  mockVideos: Video[];
+  videoRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+  containerRef: React.RefObject<HTMLDivElement>;
+  currentVideo: number;
+  liked: number[];
+  following: number[];
+  handleLike: (videoId: number, e: React.MouseEvent) => void;
+  handleFollow: (videoId: number, e: React.MouseEvent) => void;
+  handleRedirect: () => void;
+  setIsCartOpen: (open: boolean) => void;
+  isCartOpen: boolean;
+  setShowProfile: (show: boolean) => void;
+  setShowMenu: (show: boolean) => void;
+  setHighlightedDish: (id: number | undefined) => void;
+}
+
+const FeedContent = ({
+  activeTab,
+  setActiveTab,
+  mockVideos,
+  videoRefs,
+  containerRef,
+  currentVideo,
+  liked,
+  following,
+  handleLike,
+  handleFollow,
+  handleRedirect,
+  setIsCartOpen,
+  isCartOpen,
+  setShowProfile,
+  setShowMenu,
+  setHighlightedDish
+}: FeedContentProps) => {
+  return (
+    <div className="relative h-full w-full overflow-hidden">
       {/* Top Navigation */}
-      <div className="absolute top-0 left-0 right-0 z-20 pt-safe bg-gradient-to-b from-black/60 to-transparent">
+      <div className="absolute top-0 left-0 right-0 z-20 pt-safe bg-gradient-to-b from-black/80 to-transparent">
         <div className="flex justify-center gap-8 px-4 py-4">
           <button
             onClick={() => setActiveTab("following")}
@@ -200,20 +383,31 @@ const Feed = () => {
       </div>
 
       {/* Video Feed */}
-      <ScrollArea className="h-full snap-y snap-mandatory">
-        <div className="relative">
-          {mockVideos.map((video, index) => (
+      <div 
+        ref={containerRef}
+        className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
+        style={{ scrollSnapType: 'y mandatory' }}
+      >
+        {mockVideos.map((video, index) => {
+          const scrollPercent = Math.abs(currentVideo - index);
+          const opacity = scrollPercent > 0.3 ? 0.3 : 1;
+
+          return (
             <div
               key={video.id}
               ref={(el) => (videoRefs.current[index] = el)}
-              className="relative h-screen w-full snap-start snap-always"
+              className="relative h-screen w-full flex-shrink-0"
+              style={{ scrollSnapAlign: 'start' }}
             >
-              {/* Video Background */}
+              {/* Video/Image Background */}
               <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${video.videoUrl})` }}
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-300"
+                style={{ 
+                  backgroundImage: `url(${video.videoUrl})`,
+                  opacity: opacity
+                }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
               </div>
 
               {/* Content Overlay */}
@@ -240,7 +434,7 @@ const Feed = () => {
                   <div className="relative">
                     <div 
                       className="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer"
-                      onClick={handleRedirect}
+                      onClick={() => setShowProfile(true)}
                     >
                       <img src={video.profileImage} alt={video.username} className="w-full h-full object-cover" />
                     </div>
@@ -254,15 +448,26 @@ const Feed = () => {
                     )}
                   </div>
 
-                  {/* Fire button */}
+                  {/* Fire button - "Eat Now" */}
                   <button
-                    onClick={handleRedirect}
-                    className="flex flex-col items-center gap-1"
+                    onClick={() => {
+                      setHighlightedDish(video.id);
+                      setShowMenu(true);
+                    }}
+                    className="flex flex-col items-center gap-1 group"
                   >
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center">
-                      <Flame className="w-6 h-6 text-white" />
+                    <div className="relative">
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-orange-500 to-red-500 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity animate-pulse" />
+                      
+                      {/* Button */}
+                      <div className="relative w-14 h-14 rounded-full bg-black border-2 border-white flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Flame className="w-7 h-7 text-transparent bg-gradient-to-br from-red-500 via-orange-500 to-red-500 bg-clip-text" style={{ 
+                          filter: 'drop-shadow(0 0 8px rgba(251, 146, 60, 0.8))'
+                        }} />
+                      </div>
                     </div>
-                    <span className="text-white text-xs font-semibold">Ver</span>
+                    <span className="text-white text-xs font-bold tracking-wide">Eat Now</span>
                   </button>
 
                   {/* Like */}
@@ -305,9 +510,9 @@ const Feed = () => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </ScrollArea>
+          );
+        })}
+      </div>
 
       {/* Bottom Navigation */}
       <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/90 backdrop-blur-lg border-t border-white/10">
@@ -325,8 +530,14 @@ const Feed = () => {
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
               <button className="flex flex-col items-center gap-1 -mt-6 min-w-[60px]">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center shadow-glow">
-                  <ShoppingCart className="w-7 h-7 text-white" />
+                <div className="relative group">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-primary rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
+                  
+                  {/* Button */}
+                  <div className="relative w-14 h-14 rounded-2xl bg-black flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ShoppingCart className="w-7 h-7 text-primary" />
+                  </div>
                 </div>
               </button>
             </SheetTrigger>
