@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -10,6 +11,9 @@ import {
 import LoadingScreen from "@/components/LoadingScreen";
 import RestaurantProfile from "@/components/RestaurantProfile";
 import RestaurantMenu from "@/components/RestaurantMenu";
+import RiderRing from "@/components/RiderRing";
+import MessagesLayout from "@/components/MessagesLayout";
+import CheckoutTimeline from "@/components/CheckoutTimeline";
 
 interface Video {
   id: number;
@@ -134,7 +138,20 @@ const mockRestaurant = {
   profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=taco",
   followers: 45200,
   rating: 4.8,
-  description: "Los auténticos tacos al pastor de la ciudad. Receta familiar desde 1985. Disfruta de la tradición en cada bocado 🌮✨"
+  description: "Los auténticos tacos al pastor de la ciudad. Receta familiar desde 1985. Disfruta de la tradición en cada bocado 🌮✨",
+  photos: [
+    { id: 1, url: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=400&fit=crop", alt: "Tacos al pastor" },
+    { id: 2, url: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=400&h=400&fit=crop", alt: "Tacos de carnitas" },
+    { id: 3, url: "https://images.unsplash.com/photo-1613514785940-daed07799d19?w=400&h=400&fit=crop", alt: "Quesadillas" },
+    { id: 4, url: "https://images.unsplash.com/photo-1623961991178-17a6a5e70ad3?w=400&h=400&fit=crop", alt: "Salsas mexicanas" },
+    { id: 5, url: "https://images.unsplash.com/photo-1566003020713-0ef600c9161c?w=400&h=400&fit=crop", alt: "Tacos variados" },
+    { id: 6, url: "https://images.unsplash.com/photo-1564767655658-4e6b365884ff?w=400&h=400&fit=crop", alt: "Bebidas mexicanas" }
+  ],
+  locations: [
+    { id: 1, name: "Sucursal Centro", address: "Av. Juárez 123, Centro", lat: 19.4326, lng: -99.1332 },
+    { id: 2, name: "Sucursal Roma", address: "Calle Orizaba 45, Roma Norte", lat: 19.4180, lng: -99.1626 },
+    { id: 3, name: "Sucursal Condesa", address: "Av. Michoacán 78, Condesa", lat: 19.4105, lng: -99.1707 }
+  ]
 };
 
 const Feed = () => {
@@ -143,10 +160,13 @@ const Feed = () => {
   const [currentVideo, setCurrentVideo] = useState(0);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [liked, setLiked] = useState<number[]>([]);
+  const [saved, setSaved] = useState<number[]>([]);
   const [following, setFollowing] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [highlightedDish, setHighlightedDish] = useState<number | undefined>();
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -166,13 +186,28 @@ const Feed = () => {
     );
   };
 
-  const handleFollow = (videoId: number, e: React.MouseEvent) => {
+  const handleSave = (videoId: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setFollowing(prev => 
+    setSaved(prev => 
       prev.includes(videoId) 
         ? prev.filter(id => id !== videoId)
         : [...prev, videoId]
     );
+  };
+
+  const handleFollowFromFeed = (videoId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFollowing(prev => {
+      const newFollowing = prev.includes(videoId) 
+        ? prev.filter(id => id !== videoId)
+        : [...prev, videoId];
+      
+      // Redirect to home when following from feed
+      if (!prev.includes(videoId)) {
+        setTimeout(() => navigate("/home"), 300);
+      }
+      return newFollowing;
+    });
   };
 
   // Loading simulation
@@ -243,6 +278,14 @@ const Feed = () => {
     return <LoadingScreen />;
   }
 
+  if (showMessages) {
+    return <MessagesLayout onBack={() => setShowMessages(false)} />;
+  }
+
+  if (showCheckout) {
+    return <CheckoutTimeline orderId="12345" onComplete={handleRedirect} demoMode={true} />;
+  }
+
   if (showProfile) {
     return (
       <RestaurantProfile
@@ -252,9 +295,15 @@ const Feed = () => {
           setShowProfile(false);
           setShowMenu(true);
         }}
-        onFollow={() => {}}
-        onMessage={handleRedirect}
+        onFollow={() => setFollowing(prev => 
+          prev.includes(1) ? prev.filter(id => id !== 1) : [...prev, 1]
+        )}
+        onMessage={() => {
+          setShowProfile(false);
+          setShowMessages(true);
+        }}
         isFollowing={following.includes(1)}
+        fromFeed={false}
       />
     );
   }
@@ -264,7 +313,10 @@ const Feed = () => {
       <RestaurantMenu
         restaurant={mockRestaurant}
         onBack={() => setShowMenu(false)}
-        onCheckout={handleRedirect}
+        onCheckout={() => {
+          setShowMenu(false);
+          setShowCheckout(true);
+        }}
         highlightedDishId={highlightedDish}
       />
     );
@@ -283,14 +335,17 @@ const Feed = () => {
             containerRef={containerRef}
             currentVideo={currentVideo}
             liked={liked}
+            saved={saved}
             following={following}
             handleLike={handleLike}
-            handleFollow={handleFollow}
+            handleSave={handleSave}
+            handleFollowFromFeed={handleFollowFromFeed}
             handleRedirect={handleRedirect}
             setIsCartOpen={setIsCartOpen}
             isCartOpen={isCartOpen}
             setShowProfile={setShowProfile}
             setShowMenu={setShowMenu}
+            setShowMessages={setShowMessages}
             setHighlightedDish={setHighlightedDish}
           />
         </div>
@@ -306,14 +361,17 @@ const Feed = () => {
           containerRef={containerRef}
           currentVideo={currentVideo}
           liked={liked}
+          saved={saved}
           following={following}
           handleLike={handleLike}
-          handleFollow={handleFollow}
+          handleSave={handleSave}
+          handleFollowFromFeed={handleFollowFromFeed}
           handleRedirect={handleRedirect}
           setIsCartOpen={setIsCartOpen}
           isCartOpen={isCartOpen}
           setShowProfile={setShowProfile}
           setShowMenu={setShowMenu}
+          setShowMessages={setShowMessages}
           setHighlightedDish={setHighlightedDish}
         />
       </div>
@@ -329,14 +387,17 @@ interface FeedContentProps {
   containerRef: React.RefObject<HTMLDivElement>;
   currentVideo: number;
   liked: number[];
+  saved: number[];
   following: number[];
   handleLike: (videoId: number, e: React.MouseEvent) => void;
-  handleFollow: (videoId: number, e: React.MouseEvent) => void;
+  handleSave: (videoId: number, e: React.MouseEvent) => void;
+  handleFollowFromFeed: (videoId: number, e: React.MouseEvent) => void;
   handleRedirect: () => void;
   setIsCartOpen: (open: boolean) => void;
   isCartOpen: boolean;
   setShowProfile: (show: boolean) => void;
   setShowMenu: (show: boolean) => void;
+  setShowMessages: (show: boolean) => void;
   setHighlightedDish: (id: number | undefined) => void;
 }
 
@@ -348,14 +409,17 @@ const FeedContent = ({
   containerRef,
   currentVideo,
   liked,
+  saved,
   following,
   handleLike,
-  handleFollow,
+  handleSave,
+  handleFollowFromFeed,
   handleRedirect,
   setIsCartOpen,
   isCartOpen,
   setShowProfile,
   setShowMenu,
+  setShowMessages,
   setHighlightedDish
 }: FeedContentProps) => {
   return (
@@ -432,81 +496,132 @@ const FeedContent = ({
                 <div className="flex flex-col justify-end items-center gap-6 p-4 pb-24">
                   {/* Profile with follow */}
                   <div className="relative">
-                    <div 
+                    <motion.div 
                       className="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer"
                       onClick={() => setShowProfile(true)}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       <img src={video.profileImage} alt={video.username} className="w-full h-full object-cover" />
-                    </div>
+                    </motion.div>
                     {!following.includes(video.id) && (
-                      <button
-                        onClick={(e) => handleFollow(video.id, e)}
+                      <motion.button
+                        onClick={(e) => handleFollowFromFeed(video.id, e)}
                         className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-6 bg-primary rounded-full flex items-center justify-center"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
                       >
                         <Plus className="w-4 h-4 text-primary-foreground" />
-                      </button>
+                      </motion.button>
                     )}
                   </div>
 
                   {/* Fire button - "Eat Now" */}
-                  <button
+                  <motion.button
                     onClick={() => {
                       setHighlightedDish(video.id);
                       setShowMenu(true);
                     }}
                     className="flex flex-col items-center gap-1 group"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <div className="relative">
-                      {/* Glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-orange-500 to-red-500 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity animate-pulse" />
+                      {/* Animated glow effect */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-br from-red-500 via-orange-500 to-red-500 rounded-full blur-md"
+                        animate={{
+                          opacity: [0.4, 0.7, 0.4],
+                          scale: [1, 1.1, 1]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
                       
                       {/* Button */}
-                      <div className="relative w-14 h-14 rounded-full bg-black border-2 border-white flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Flame className="w-7 h-7 text-transparent bg-gradient-to-br from-red-500 via-orange-500 to-red-500 bg-clip-text" style={{ 
-                          filter: 'drop-shadow(0 0 8px rgba(251, 146, 60, 0.8))'
-                        }} />
+                      <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 flex items-center justify-center shadow-lg border-2 border-white/30">
+                        <Flame className="w-7 h-7 text-white drop-shadow-lg" />
                       </div>
                     </div>
-                    <span className="text-white text-xs font-bold tracking-wide">Eat Now</span>
-                  </button>
+                    <span className="text-white text-xs font-bold tracking-wide drop-shadow-md">Eat Now</span>
+                  </motion.button>
 
                   {/* Like */}
-                  <button
+                  <motion.button
                     onClick={(e) => handleLike(video.id, e)}
                     className="flex flex-col items-center gap-1"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    <Heart 
-                      className={`w-8 h-8 transition-colors ${
-                        liked.includes(video.id) ? 'fill-red-500 text-red-500' : 'text-white'
-                      }`}
-                    />
+                    <motion.div
+                      animate={liked.includes(video.id) ? {
+                        scale: [1, 1.3, 1],
+                        rotate: [0, 10, -10, 0]
+                      } : {}}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Heart 
+                        className={`w-8 h-8 transition-colors ${
+                          liked.includes(video.id) ? 'fill-red-500 text-red-500' : 'text-white'
+                        }`}
+                      />
+                    </motion.div>
                     <span className="text-white text-xs">
                       {(video.likes + (liked.includes(video.id) ? 1 : 0)).toLocaleString()}
                     </span>
-                  </button>
+                  </motion.button>
 
                   {/* Comments */}
-                  <button onClick={handleRedirect} className="flex flex-col items-center gap-1">
+                  <motion.button
+                    onClick={handleRedirect}
+                    className="flex flex-col items-center gap-1"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <MessageSquare className="w-8 h-8 text-white" />
                     <span className="text-white text-xs">{video.comments}</span>
-                  </button>
+                  </motion.button>
 
                   {/* Save */}
-                  <button onClick={handleRedirect} className="flex flex-col items-center gap-1">
-                    <Bookmark className="w-8 h-8 text-white" />
-                  </button>
+                  <motion.button
+                    onClick={(e) => handleSave(video.id, e)}
+                    className="flex flex-col items-center gap-1"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <motion.div
+                      animate={saved.includes(video.id) ? {
+                        rotateY: [0, 180, 360]
+                      } : {}}
+                      transition={{ duration: 0.6 }}
+                    >
+                      <Bookmark 
+                        className={`w-8 h-8 transition-colors ${
+                          saved.includes(video.id) ? 'fill-accent text-accent' : 'text-white'
+                        }`}
+                      />
+                    </motion.div>
+                  </motion.button>
 
                   {/* Share */}
-                  <button onClick={handleRedirect} className="flex flex-col items-center gap-1">
+                  <motion.button
+                    onClick={handleRedirect}
+                    className="flex flex-col items-center gap-1"
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <Share2 className="w-8 h-8 text-white" />
-                  </button>
+                  </motion.button>
 
-                  {/* Music spinner */}
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent animate-spin-slow flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
-                      <Music className="w-4 h-4 text-white" />
-                    </div>
-                  </div>
+                  {/* RiderRing replaces music spinner */}
+                  <RiderRing
+                    isPlaying={currentVideo === index}
+                    albumArt={video.profileImage}
+                    onClick={() => {}}
+                  />
                 </div>
               </div>
             </div>
@@ -517,44 +632,78 @@ const FeedContent = ({
       {/* Bottom Navigation */}
       <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/90 backdrop-blur-lg border-t border-white/10">
         <div className="flex justify-around items-center px-4 py-3 pb-safe">
-          <button onClick={handleRedirect} className="flex flex-col items-center gap-1 min-w-[60px]">
+          <motion.button
+            onClick={handleRedirect}
+            className="flex flex-col items-center gap-1 min-w-[60px]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Home className="w-6 h-6 text-white" />
             <span className="text-white text-xs">Inicio</span>
-          </button>
+          </motion.button>
           
-          <button onClick={handleRedirect} className="flex flex-col items-center gap-1 min-w-[60px]">
+          <motion.button
+            onClick={handleRedirect}
+            className="flex flex-col items-center gap-1 min-w-[60px]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Bell className="w-6 h-6 text-white" />
             <span className="text-white text-xs">Notif</span>
-          </button>
+          </motion.button>
 
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
-              <button className="flex flex-col items-center gap-1 -mt-6 min-w-[60px]">
+              <motion.button
+                className="flex flex-col items-center gap-1 -mt-6 min-w-[60px]"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <div className="relative group">
                   {/* Glow effect */}
-                  <div className="absolute inset-0 bg-primary rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
+                  <motion.div
+                    className="absolute inset-0 bg-primary rounded-2xl blur-lg"
+                    animate={{
+                      opacity: [0.3, 0.6, 0.3]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
                   
                   {/* Button */}
-                  <div className="relative w-14 h-14 rounded-2xl bg-black flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="relative w-14 h-14 rounded-2xl bg-black flex items-center justify-center group-hover:scale-110 transition-transform border-2 border-primary/50">
                     <ShoppingCart className="w-7 h-7 text-primary" />
                   </div>
                 </div>
-              </button>
+              </motion.button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[85vh] bg-background rounded-t-3xl p-0">
               <DeliveryInterface onNavigate={handleRedirect} />
             </SheetContent>
           </Sheet>
 
-          <button onClick={handleRedirect} className="flex flex-col items-center gap-1 min-w-[60px]">
+          <motion.button
+            onClick={() => setShowMessages(true)}
+            className="flex flex-col items-center gap-1 min-w-[60px]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <MessageSquare className="w-6 h-6 text-white" />
             <span className="text-white text-xs">Mensajes</span>
-          </button>
+          </motion.button>
 
-          <button onClick={handleRedirect} className="flex flex-col items-center gap-1 min-w-[60px]">
+          <motion.button
+            onClick={handleRedirect}
+            className="flex flex-col items-center gap-1 min-w-[60px]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <User className="w-6 h-6 text-white" />
             <span className="text-white text-xs">Perfil</span>
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>

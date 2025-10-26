@@ -1,5 +1,8 @@
 import { ArrowLeft, MessageSquare, Menu as MenuIcon, UserPlus, MapPin, Star } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import PhotoMosaic from "@/components/PhotoMosaic";
+import LocationDropdown from "@/components/LocationDropdown";
 
 interface RestaurantProfileProps {
   restaurant: {
@@ -12,12 +15,21 @@ interface RestaurantProfileProps {
     followers: number;
     rating: number;
     description: string;
+    photos?: Array<{ id: number; url: string; alt: string }>;
+    locations?: Array<{
+      id: number;
+      name: string;
+      address: string;
+      lat: number;
+      lng: number;
+    }>;
   };
   onBack: () => void;
   onOpenMenu: () => void;
   onFollow: () => void;
   onMessage: () => void;
   isFollowing?: boolean;
+  fromFeed?: boolean;
 }
 
 const RestaurantProfile = ({ 
@@ -26,8 +38,16 @@ const RestaurantProfile = ({
   onOpenMenu, 
   onFollow, 
   onMessage,
-  isFollowing = false 
+  isFollowing = false,
+  fromFeed = false
 }: RestaurantProfileProps) => {
+  const handleFollow = () => {
+    onFollow();
+    // Only navigate if coming from feed
+    if (!fromFeed) {
+      // Just animate, don't navigate
+    }
+  };
   return (
     <div className="fixed inset-0 z-30 bg-black overflow-y-auto">
       {/* Cover Image with blur */}
@@ -89,41 +109,69 @@ const RestaurantProfile = ({
 
         {/* Action Buttons */}
         <div className="flex gap-3 mb-6">
-          <Button
-            onClick={onFollow}
-            size="lg"
-            className="flex-1 h-12 rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 transition-opacity"
-          >
-            <UserPlus className="w-5 h-5 mr-2" />
-            {isFollowing ? 'Siguiendo' : 'Seguir'}
-          </Button>
+          <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={handleFollow}
+              size="lg"
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 transition-opacity relative overflow-hidden"
+            >
+              {isFollowing && (
+                <motion.div
+                  className="absolute inset-0 bg-white/20"
+                  initial={{ scale: 0, opacity: 1 }}
+                  animate={{ scale: 2, opacity: 0 }}
+                  transition={{ duration: 0.6 }}
+                />
+              )}
+              <UserPlus className="w-5 h-5 mr-2" />
+              {isFollowing ? 'Siguiendo' : 'Seguir'}
+            </Button>
+          </motion.div>
           
-          <Button
-            onClick={onMessage}
-            size="lg"
-            variant="outline"
-            className="flex-1 h-12 rounded-xl border-border hover:bg-card"
-          >
-            <MessageSquare className="w-5 h-5 mr-2" />
-            Mensaje
-          </Button>
+          <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={onMessage}
+              size="lg"
+              variant="outline"
+              className="w-full h-12 rounded-xl border-border hover:bg-card"
+            >
+              <MessageSquare className="w-5 h-5 mr-2" />
+              Mensaje
+            </Button>
+          </motion.div>
         </div>
 
         {/* Menu Button */}
-        <Button
-          onClick={onOpenMenu}
-          size="lg"
-          className="w-full h-14 rounded-2xl bg-black border-2 border-white text-white hover:bg-white hover:text-black transition-all"
-        >
-          <MenuIcon className="w-5 h-5 mr-2" />
-          Ver Menú Completo
-        </Button>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            onClick={onOpenMenu}
+            size="lg"
+            className="w-full h-14 rounded-2xl bg-black border-2 border-white text-white hover:bg-white hover:text-black transition-all"
+          >
+            <MenuIcon className="w-5 h-5 mr-2" />
+            Ver Menú Completo
+          </Button>
+        </motion.div>
 
         {/* Description */}
         <div className="mt-6 p-4 bg-card rounded-2xl">
           <p className="text-sm text-muted-foreground leading-relaxed">
             {restaurant.description}
           </p>
+        </div>
+
+        {/* Location Selector */}
+        {restaurant.locations && restaurant.locations.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Ubicaciones disponibles</h3>
+            <LocationDropdown locations={restaurant.locations} />
+          </div>
+        )}
+
+        {/* Photo Mosaic */}
+        <div className="mt-6">
+          <h3 className="text-sm font-semibold text-foreground mb-3">Fotos</h3>
+          <PhotoMosaic photos={restaurant.photos || []} />
         </div>
       </div>
     </div>
