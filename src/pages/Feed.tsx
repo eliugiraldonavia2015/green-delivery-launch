@@ -14,6 +14,11 @@ import RestaurantMenu from "@/components/RestaurantMenu";
 import RiderRing from "@/components/RiderRing";
 import MessagesLayout from "@/components/MessagesLayout";
 import CheckoutTimeline from "@/components/CheckoutTimeline";
+import UserProfile from "@/components/UserProfile";
+import Notifications from "@/components/Notifications";
+import CommentOverlay from "@/components/CommentOverlay";
+import ShareOverlay from "@/components/ShareOverlay";
+import MusicPlayerOverlay from "@/components/MusicPlayerOverlay";
 
 interface Video {
   id: number;
