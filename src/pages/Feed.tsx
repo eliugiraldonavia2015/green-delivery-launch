@@ -179,6 +179,7 @@ const Feed = () => {
   const [showMusicPlayer, setShowMusicPlayer] = useState(false);
   const [currentMusicInfo, setCurrentMusicInfo] = useState({ name: "", artist: "" });
   const [highlightedDish, setHighlightedDish] = useState<number | undefined>();
+  const [selectedRestaurant, setSelectedRestaurant] = useState<{ name: string; avatar: string } | null>(null);
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const isScrolling = useRef(false);
@@ -290,7 +291,17 @@ const Feed = () => {
   }
 
   if (showMessages) {
-    return <MessagesLayout onBack={() => setShowMessages(false)} />;
+    return (
+      <MessagesLayout 
+        onBack={() => {
+          setShowMessages(false);
+          setSelectedRestaurant(null);
+        }} 
+        selectedConversation={selectedRestaurant ? "restaurant" : undefined}
+        restaurantName={selectedRestaurant?.name}
+        restaurantAvatar={selectedRestaurant?.avatar}
+      />
+    );
   }
 
   if (showCheckout) {
@@ -318,6 +329,7 @@ const Feed = () => {
           prev.includes(1) ? prev.filter(id => id !== 1) : [...prev, 1]
         )}
         onMessage={() => {
+          setSelectedRestaurant({ name: mockRestaurant.name, avatar: mockRestaurant.profileImage });
           setShowProfile(false);
           setShowMessages(true);
         }}
@@ -330,7 +342,13 @@ const Feed = () => {
   if (showMenu) {
     return (
       <RestaurantMenu
-        restaurant={mockRestaurant}
+        restaurant={{
+          name: mockRestaurant.name,
+          profileImage: mockRestaurant.profileImage,
+          coverImage: mockRestaurant.coverImage,
+          location: mockRestaurant.location,
+          rating: mockRestaurant.rating
+        }}
         onBack={() => setShowMenu(false)}
         onCheckout={() => {
           setShowMenu(false);
@@ -487,22 +505,19 @@ const FeedContent = ({
       {/* Top Navigation - Redesigned */}
       <div className="absolute top-0 left-0 right-0 z-20 pt-safe">
         <div className="relative flex justify-center px-4 py-3">
-          {/* Background blur */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-transparent backdrop-blur-md" />
-          
-          {/* Tabs */}
-          <div className="relative flex gap-2 bg-white/10 backdrop-blur-lg rounded-full p-1 border border-white/20">
+          {/* Tabs without blur background */}
+          <div className="relative flex gap-2 p-1">
             <motion.button
               onClick={() => setActiveTab("following")}
-              className={`relative px-6 py-2 text-sm font-semibold rounded-full transition-colors ${
-                activeTab === "following" ? "text-background" : "text-white/70"
+              className={`relative px-6 py-2 text-sm font-bold rounded-full transition-all ${
+                activeTab === "following" ? "text-white" : "text-white/60"
               }`}
               whileTap={{ scale: 0.95 }}
             >
               {activeTab === "following" && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-white rounded-full"
+                  className="absolute inset-0 bg-accent rounded-full shadow-accent"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
@@ -510,15 +525,15 @@ const FeedContent = ({
             </motion.button>
             <motion.button
               onClick={() => setActiveTab("foryou")}
-              className={`relative px-6 py-2 text-sm font-semibold rounded-full transition-colors ${
-                activeTab === "foryou" ? "text-background" : "text-white/70"
+              className={`relative px-6 py-2 text-sm font-bold rounded-full transition-all ${
+                activeTab === "foryou" ? "text-white" : "text-white/60"
               }`}
               whileTap={{ scale: 0.95 }}
             >
               {activeTab === "foryou" && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-white rounded-full"
+                  className="absolute inset-0 bg-primary rounded-full shadow-glow"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
@@ -561,9 +576,24 @@ const FeedContent = ({
                 {/* Left side - Info */}
                 <div className="flex-1 flex flex-col justify-end p-4 pb-24">
                   <div className="space-y-3">
-                    <p className="text-white font-semibold text-lg">
-                      {video.username}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <p 
+                        className="text-white font-semibold text-lg cursor-pointer hover:underline"
+                        onClick={() => setShowProfile(true)}
+                      >
+                        {video.username}
+                      </p>
+                      {!following.includes(video.id) && (
+                        <motion.button
+                          onClick={(e) => handleFollowFromFeed(video.id, e)}
+                          className="px-4 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold rounded-full transition-colors"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Seguir
+                        </motion.button>
+                      )}
+                    </div>
                     <p className="text-white text-sm leading-relaxed max-w-xs">
                       {video.description}
                     </p>
@@ -576,27 +606,6 @@ const FeedContent = ({
 
                 {/* Right side - Actions */}
                 <div className="flex flex-col justify-end items-center gap-6 p-4 pb-24">
-                  {/* Profile with follow */}
-                  <div className="relative">
-                    <motion.div 
-                      className="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer"
-                      onClick={() => setShowProfile(true)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <img src={video.profileImage} alt={video.username} className="w-full h-full object-cover" />
-                    </motion.div>
-                    {!following.includes(video.id) && (
-                      <motion.button
-                        onClick={(e) => handleFollowFromFeed(video.id, e)}
-                        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-6 bg-primary rounded-full flex items-center justify-center"
-                        whileHover={{ scale: 1.2 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <Plus className="w-4 h-4 text-primary-foreground" />
-                      </motion.button>
-                    )}
-                  </div>
 
                   {/* Fire button - "Eat Now" */}
                   <motion.button

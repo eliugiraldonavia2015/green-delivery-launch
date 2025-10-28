@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, Heart, ChevronDown } from "lucide-react";
+import { X, Plus, Minus, Share2, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Product {
   id: number;
@@ -20,24 +20,34 @@ interface ProductDetailOverlayProps {
   onAddToCart: (productId: number, quantity: number, notes: string) => void;
 }
 
-const recommendations = [
-  { id: 1, name: "Extra Queso", price: 2.50 },
-  { id: 2, name: "Tocino Crujiente", price: 3.00 },
-  { id: 3, name: "Aguacate", price: 2.00 },
-  { id: 4, name: "Jalapeños", price: 1.50 }
+const sideRecommendations = [
+  { id: 1, name: "Papas Fritas", price: 2.50 },
+  { id: 2, name: "Aros de Cebolla", price: 3.00 },
+  { id: 3, name: "Ensalada César", price: 2.00 }
+];
+
+const drinkRecommendations = [
+  { id: 4, name: "Coca-Cola", price: 1.50 },
+  { id: 5, name: "Limonada", price: 2.00 },
+  { id: 6, name: "Té Helado", price: 1.80 }
 ];
 
 const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: ProductDetailOverlayProps) => {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [scrollY, setScrollY] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [selectedSides, setSelectedSides] = useState<number[]>([]);
+  const [selectedDrinks, setSelectedDrinks] = useState<number[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       setQuantity(1);
       setNotes("");
+      setSelectedSides([]);
+      setSelectedDrinks([]);
+      setScrollY(0);
     }
   }, [isOpen]);
 
@@ -48,7 +58,23 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
   if (!product) return null;
 
   const total = product.price * quantity;
-  const showStickyHeader = scrollY > 200;
+  const showStickyHeader = scrollY > 250;
+
+  const toggleSide = (id: number) => {
+    setSelectedSides(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (prev.length >= 3) return prev;
+      return [...prev, id];
+    });
+  };
+
+  const toggleDrink = (id: number) => {
+    setSelectedDrinks(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (prev.length >= 3) return prev;
+      return [...prev, id];
+    });
+  };
 
   return (
     <AnimatePresence>
@@ -66,10 +92,10 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
           {/* Overlay */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: 0 }}
+            animate={{ y: "15%" }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-3xl max-h-[95vh] flex flex-col overflow-hidden"
+            className="fixed inset-x-0 bottom-0 top-0 z-50 bg-background rounded-t-3xl flex flex-col overflow-hidden"
           >
             {/* Sticky Header (appears on scroll) */}
             <AnimatePresence>
@@ -80,19 +106,30 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                   exit={{ y: -100 }}
                   className="absolute top-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between"
                 >
-                  <div className="flex items-center gap-3">
-                    <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover" />
-                    <div>
-                      <h4 className="font-bold">{product.name}</h4>
-                      <p className="text-sm text-primary">${product.price}</p>
-                    </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold truncate">{product.name}</h4>
+                    <p className="text-sm text-primary">${product.price}</p>
                   </div>
-                  <button
-                    onClick={onClose}
-                    className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {/* Share functionality */}}
+                      className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
+                    >
+                      <Share2 className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => setIsSaved(!isSaved)}
+                      className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
+                    >
+                      <Bookmark className={`w-5 h-5 ${isSaved ? "fill-accent text-accent" : ""}`} />
+                    </button>
+                    <button
+                      onClick={onClose}
+                      className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -114,49 +151,68 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                 
-                {/* Close button */}
+                {/* Top buttons */}
                 <button
                   onClick={onClose}
                   className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center"
                 >
                   <X className="w-5 h-5 text-white" />
                 </button>
-
-                {/* Like button */}
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setIsLiked(!isLiked)}
-                  className="absolute top-4 left-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center"
-                >
-                  <Heart className={`w-5 h-5 ${isLiked ? "fill-accent text-accent" : "text-white"}`} />
-                </motion.button>
               </div>
 
               <div className="px-6 pb-32">
                 {/* Product Info */}
                 <div className="mb-6 -mt-8 relative z-10">
                   <div className="bg-card rounded-3xl p-6 shadow-lg">
-                    <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-                    <p className="text-muted-foreground mb-4">{product.description}</p>
+                    <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
+                    <p className="text-muted-foreground text-lg mb-4">{product.description}</p>
                     <p className="text-3xl font-bold text-primary">${product.price}</p>
                   </div>
                 </div>
 
-                {/* Recommendations */}
+                {/* Side Recommendations */}
                 <div className="mb-6">
-                  <h3 className="font-bold text-lg mb-3">Agrega Extras</h3>
+                  <h3 className="font-bold text-lg mb-2">Acompañamiento recomendado</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Elige máximo 3 opciones</p>
                   <div className="space-y-2">
-                    {recommendations.map((rec) => (
+                    {sideRecommendations.map((rec) => (
                       <motion.button
                         key={rec.id}
+                        onClick={() => toggleSide(rec.id)}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full flex items-center justify-between bg-card hover:bg-muted transition-colors rounded-2xl p-4"
+                        className={`w-full flex items-center justify-between bg-card hover:bg-muted transition-colors rounded-2xl p-4 border-2 ${
+                          selectedSides.includes(rec.id) ? "border-primary" : "border-transparent"
+                        }`}
                       >
-                        <span className="font-medium">{rec.name}</span>
                         <div className="flex items-center gap-3">
-                          <span className="text-primary font-semibold">+${rec.price}</span>
-                          <div className="w-6 h-6 rounded-full border-2 border-muted-foreground" />
+                          <Checkbox checked={selectedSides.includes(rec.id)} />
+                          <span className="font-medium">{rec.name}</span>
                         </div>
+                        <span className="text-primary font-semibold">+${rec.price}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Drink Recommendations */}
+                <div className="mb-6">
+                  <h3 className="font-bold text-lg mb-2">Bebidas recomendadas</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Elige máximo 3 opciones</p>
+                  <div className="space-y-2">
+                    {drinkRecommendations.map((rec) => (
+                      <motion.button
+                        key={rec.id}
+                        onClick={() => toggleDrink(rec.id)}
+                        whileTap={{ scale: 0.98 }}
+                        className={`w-full flex items-center justify-between bg-card hover:bg-muted transition-colors rounded-2xl p-4 border-2 ${
+                          selectedDrinks.includes(rec.id) ? "border-primary" : "border-transparent"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Checkbox checked={selectedDrinks.includes(rec.id)} />
+                          <span className="font-medium">{rec.name}</span>
+                        </div>
+                        <span className="text-primary font-semibold">+${rec.price}</span>
                       </motion.button>
                     ))}
                   </div>
@@ -164,7 +220,7 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
 
                 {/* Special Instructions */}
                 <div className="mb-6">
-                  <h3 className="font-bold text-lg mb-3">Instrucciones Especiales</h3>
+                  <h3 className="font-bold text-lg mb-3">Notas especiales</h3>
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}

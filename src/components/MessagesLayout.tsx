@@ -24,7 +24,9 @@ interface Conversation {
 
 interface MessagesLayoutProps {
   onBack: () => void;
-  selectedConversation?: number;
+  selectedConversation?: number | string;
+  restaurantName?: string;
+  restaurantAvatar?: string;
 }
 
 const mockConversations: Conversation[] = [
@@ -79,13 +81,17 @@ const mockMessages: Message[] = [
   }
 ];
 
-const MessagesLayout = ({ onBack, selectedConversation }: MessagesLayoutProps) => {
+const MessagesLayout = ({ onBack, selectedConversation, restaurantName, restaurantAvatar }: MessagesLayoutProps) => {
   const [view, setView] = useState<"inbox" | "chat">(selectedConversation ? "chat" : "inbox");
   const [messages, setMessages] = useState(mockMessages);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const activeConversation = selectedConversation 
+    ? { name: restaurantName || "Tacos El Rey", avatar: restaurantAvatar || mockConversations[0].avatar, online: true }
+    : mockConversations[0];
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -233,16 +239,16 @@ const MessagesLayout = ({ onBack, selectedConversation }: MessagesLayoutProps) =
         <div className="flex items-center gap-3 flex-1">
           <div className="relative">
             <img
-              src={mockConversations[0].avatar}
-              alt={mockConversations[0].name}
+              src={activeConversation.avatar}
+              alt={activeConversation.name}
               className="w-10 h-10 rounded-full"
             />
-            {mockConversations[0].online && (
+            {activeConversation.online && (
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background" />
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground">{mockConversations[0].name}</p>
+            <p className="font-semibold text-foreground">{activeConversation.name}</p>
             <p className="text-xs text-muted-foreground">
               {isTyping ? "Escribiendo..." : "En línea"}
             </p>
