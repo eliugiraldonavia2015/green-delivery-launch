@@ -172,6 +172,12 @@ const Feed = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [showMusicPlayer, setShowMusicPlayer] = useState(false);
+  const [currentMusicInfo, setCurrentMusicInfo] = useState({ name: "", artist: "" });
   const [highlightedDish, setHighlightedDish] = useState<number | undefined>();
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -291,6 +297,14 @@ const Feed = () => {
     return <CheckoutTimeline orderId="12345" onComplete={handleRedirect} demoMode={true} />;
   }
 
+  if (showUserProfile) {
+    return <UserProfile onBack={() => setShowUserProfile(false)} />;
+  }
+
+  if (showNotifications) {
+    return <Notifications onBack={() => setShowNotifications(false)} />;
+  }
+
   if (showProfile) {
     return (
       <RestaurantProfile
@@ -351,6 +365,12 @@ const Feed = () => {
             setShowProfile={setShowProfile}
             setShowMenu={setShowMenu}
             setShowMessages={setShowMessages}
+            setShowUserProfile={setShowUserProfile}
+            setShowNotifications={setShowNotifications}
+            setShowComments={setShowComments}
+            setShowShare={setShowShare}
+            setShowMusicPlayer={setShowMusicPlayer}
+            setCurrentMusicInfo={setCurrentMusicInfo}
             setHighlightedDish={setHighlightedDish}
           />
         </div>
@@ -377,9 +397,32 @@ const Feed = () => {
           setShowProfile={setShowProfile}
           setShowMenu={setShowMenu}
           setShowMessages={setShowMessages}
+          setShowUserProfile={setShowUserProfile}
+          setShowNotifications={setShowNotifications}
+          setShowComments={setShowComments}
+          setShowShare={setShowShare}
+          setShowMusicPlayer={setShowMusicPlayer}
+          setCurrentMusicInfo={setCurrentMusicInfo}
           setHighlightedDish={setHighlightedDish}
         />
       </div>
+
+      {/* Overlays */}
+      <CommentOverlay 
+        isOpen={showComments} 
+        onClose={() => setShowComments(false)}
+        commentCount={mockVideos[currentVideo]?.comments || 0}
+      />
+      <ShareOverlay 
+        isOpen={showShare} 
+        onClose={() => setShowShare(false)}
+      />
+      <MusicPlayerOverlay 
+        isOpen={showMusicPlayer} 
+        onClose={() => setShowMusicPlayer(false)}
+        musicName={currentMusicInfo.name}
+        artist={currentMusicInfo.artist}
+      />
     </div>
   );
 };
@@ -403,6 +446,12 @@ interface FeedContentProps {
   setShowProfile: (show: boolean) => void;
   setShowMenu: (show: boolean) => void;
   setShowMessages: (show: boolean) => void;
+  setShowUserProfile: (show: boolean) => void;
+  setShowNotifications: (show: boolean) => void;
+  setShowComments: (show: boolean) => void;
+  setShowShare: (show: boolean) => void;
+  setShowMusicPlayer: (show: boolean) => void;
+  setCurrentMusicInfo: (info: { name: string; artist: string }) => void;
   setHighlightedDish: (id: number | undefined) => void;
 }
 
@@ -425,29 +474,57 @@ const FeedContent = ({
   setShowProfile,
   setShowMenu,
   setShowMessages,
+  setShowUserProfile,
+  setShowNotifications,
+  setShowComments,
+  setShowShare,
+  setShowMusicPlayer,
+  setCurrentMusicInfo,
   setHighlightedDish
 }: FeedContentProps) => {
   return (
     <div className="relative h-full w-full overflow-hidden">
-      {/* Top Navigation */}
-      <div className="absolute top-0 left-0 right-0 z-20 pt-safe bg-gradient-to-b from-black/80 to-transparent">
-        <div className="flex justify-center gap-8 px-4 py-4">
-          <button
-            onClick={() => setActiveTab("following")}
-            className={`text-lg font-semibold transition-colors ${
-              activeTab === "following" ? "text-white" : "text-white/60"
-            }`}
-          >
-            Siguiendo
-          </button>
-          <button
-            onClick={() => setActiveTab("foryou")}
-            className={`text-lg font-semibold transition-colors ${
-              activeTab === "foryou" ? "text-white" : "text-white/60"
-            }`}
-          >
-            Para Ti
-          </button>
+      {/* Top Navigation - Redesigned */}
+      <div className="absolute top-0 left-0 right-0 z-20 pt-safe">
+        <div className="relative flex justify-center px-4 py-3">
+          {/* Background blur */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-transparent backdrop-blur-md" />
+          
+          {/* Tabs */}
+          <div className="relative flex gap-2 bg-white/10 backdrop-blur-lg rounded-full p-1 border border-white/20">
+            <motion.button
+              onClick={() => setActiveTab("following")}
+              className={`relative px-6 py-2 text-sm font-semibold rounded-full transition-colors ${
+                activeTab === "following" ? "text-background" : "text-white/70"
+              }`}
+              whileTap={{ scale: 0.95 }}
+            >
+              {activeTab === "following" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 bg-white rounded-full"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">Siguiendo</span>
+            </motion.button>
+            <motion.button
+              onClick={() => setActiveTab("foryou")}
+              className={`relative px-6 py-2 text-sm font-semibold rounded-full transition-colors ${
+                activeTab === "foryou" ? "text-background" : "text-white/70"
+              }`}
+              whileTap={{ scale: 0.95 }}
+            >
+              {activeTab === "foryou" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 bg-white rounded-full"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">Para Ti</span>
+            </motion.button>
+          </div>
         </div>
       </div>
 
@@ -581,7 +658,7 @@ const FeedContent = ({
 
                   {/* Comments */}
                   <motion.button
-                    onClick={handleRedirect}
+                    onClick={() => setShowComments(true)}
                     className="flex flex-col items-center gap-1"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     whileTap={{ scale: 0.9 }}
@@ -613,7 +690,7 @@ const FeedContent = ({
 
                   {/* Share */}
                   <motion.button
-                    onClick={handleRedirect}
+                    onClick={() => setShowShare(true)}
                     className="flex flex-col items-center gap-1"
                     whileHover={{ scale: 1.1, rotate: -5 }}
                     whileTap={{ scale: 0.9 }}
@@ -625,7 +702,10 @@ const FeedContent = ({
                   <RiderRing
                     isPlaying={currentVideo === index}
                     albumArt={video.profileImage}
-                    onClick={() => {}}
+                    onClick={() => {
+                      setCurrentMusicInfo({ name: video.music, artist: video.username });
+                      setShowMusicPlayer(true);
+                    }}
                   />
                 </div>
               </div>
@@ -648,7 +728,7 @@ const FeedContent = ({
           </motion.button>
           
           <motion.button
-            onClick={handleRedirect}
+            onClick={() => setShowNotifications(true)}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -701,7 +781,7 @@ const FeedContent = ({
           </motion.button>
 
           <motion.button
-            onClick={handleRedirect}
+            onClick={() => setShowUserProfile(true)}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
