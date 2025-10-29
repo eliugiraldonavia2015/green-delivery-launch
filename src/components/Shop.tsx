@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MapPin, Search, Mic, SlidersHorizontal, Star, Home, Bell, MessageSquare, User } from "lucide-react";
+import { X, MapPin, Search, Mic, SlidersHorizontal, Star, Home, Bell, MessageSquare, User, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -96,24 +96,25 @@ const Shop = ({ onClose }: ShopProps) => {
             <SlidersHorizontal className="w-5 h-5 text-foreground" />
           </button>
         </div>
-      </div>
 
-      {/* Category Tabs */}
-      <div className="px-6 py-3 overflow-x-auto no-scrollbar">
-        <div className="flex gap-2 min-w-max">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                selectedCategory === cat
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-foreground hover:bg-muted"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Category Tabs - Now part of sticky header */}
+        <div className="mt-3 overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 min-w-max">
+            {categories.map((cat) => (
+              <motion.button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                whileTap={{ scale: 0.95 }}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  selectedCategory === cat
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-foreground hover:bg-muted"
+                }`}
+              >
+                {cat}
+              </motion.button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -152,10 +153,45 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       </div>
 
+      {/* Category Icons */}
+      <div className="px-6 mb-6 overflow-x-auto no-scrollbar">
+        <div className="flex gap-4 min-w-max">
+          {categoryIcons.map((cat) => (
+            <button
+              key={cat.name}
+              className="flex flex-col items-center gap-2 min-w-[70px]"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-card border border-border flex items-center justify-center text-3xl hover:scale-105 transition-transform">
+                {cat.emoji}
+              </div>
+              <span className="text-xs text-muted-foreground">{cat.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Promo Banner */}
+      <div className="px-6 mb-4">
+        <div className="relative h-40 rounded-3xl overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1"
+            alt="Promo"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex flex-col justify-center px-6">
+            <p className="text-3xl font-bold text-white mb-1">Get 50% Off</p>
+            <p className="text-sm text-white/90 mb-3">en tu primera orden sobre $25</p>
+            <Button className="w-32 bg-primary hover:bg-primary/90 text-primary-foreground">
+              Ordenar ahora
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Popular Section - 2 rows, 10 columns */}
       <div className="px-6 mb-6">
         <h2 className="text-xl font-bold mb-4">Popular cerca de ti</h2>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           <div className="grid grid-rows-2 grid-flow-col gap-3 pb-2" style={{ gridTemplateColumns: 'repeat(10, 160px)' }}>
             {popularItems.map((item) => (
             <motion.div
@@ -187,16 +223,16 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       </div>
 
-      {/* Additional Sections - 1 row, 10 columns each */}
-      {["Nuevos Restaurantes", "Ofertas Especiales", "Cocina Internacional", "Comida Rápida", "Postres Deliciosos"].map((sectionTitle, idx) => (
+      {/* Restaurant Sections by Category - 10 sections with 1 row, 10 columns each */}
+      {Array.from({ length: 10 }, (_, idx) => (
         <div key={idx} className="px-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">{sectionTitle}</h2>
-          <div className="overflow-x-auto">
+          <h2 className="text-xl font-bold mb-4">Restaurante {idx + 1} - {selectedCategory}</h2>
+          <div className="overflow-x-auto no-scrollbar">
             <div className="flex gap-3 pb-2">
               {Array.from({ length: 10 }, (_, i) => ({
-                id: idx * 10 + i + 100,
-                name: `${sectionTitle} ${i + 1}`,
-                restaurant: `Restaurante ${i + 1}`,
+                id: idx * 10 + i + 200,
+                name: `${selectedCategory} ${i + 1}`,
+                restaurant: `Restaurante ${idx + 1}`,
                 image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
                 rating: (4 + Math.random()).toFixed(1),
                 discount: Math.floor(Math.random() * 30 + 10),
@@ -233,6 +269,16 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       ))}
 
+      {/* Load More Button */}
+      <div className="px-6 mb-6">
+        <Button 
+          className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90"
+          onClick={() => {/* Load more logic */}}
+        >
+          Cargar más
+        </Button>
+      </div>
+
       <div className="h-32" />
 
       {/* Bottom Navigation */}
@@ -245,11 +291,13 @@ const Shop = ({ onClose }: ShopProps) => {
             whileTap={{ scale: 0.95 }}
           >
             <Home className="w-6 h-6 text-white" />
-            <span className="text-white text-xs">Feed</span>
+            <span className="text-white text-xs">Home</span>
           </motion.button>
           
           <motion.button
-            onClick={() => {/* Notifications */}}
+            onClick={() => {
+              // TODO: Implement notifications
+            }}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -259,6 +307,7 @@ const Shop = ({ onClose }: ShopProps) => {
           </motion.button>
 
           <motion.button
+            onClick={onClose}
             className="flex flex-col items-center gap-1 -mt-6 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -291,7 +340,9 @@ const Shop = ({ onClose }: ShopProps) => {
           </motion.button>
 
           <motion.button
-            onClick={() => {/* Messages */}}
+            onClick={() => {
+              // TODO: Implement messages
+            }}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -301,7 +352,9 @@ const Shop = ({ onClose }: ShopProps) => {
           </motion.button>
 
           <motion.button
-            onClick={() => {/* Profile */}}
+            onClick={() => {
+              // TODO: Implement profile
+            }}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -312,60 +365,95 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       </div>
 
-      {/* Filter Sheet */}
+      {/* Filter Sheet - 70% height from bottom */}
       <Sheet open={showFilters} onOpenChange={setShowFilters}>
-        <SheetContent side="right" className="w-full sm:w-[400px]">
-          <div className="py-6">
+        <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
+          <div className="py-6 h-full overflow-y-auto">
             <h3 className="text-xl font-bold mb-6">Filtros</h3>
             
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-semibold mb-3">Precio</h4>
-                <div className="space-y-2">
-                  {["$", "$$", "$$$", "$$$$"].map((price) => (
-                    <button
-                      key={price}
-                      className="w-full text-left px-4 py-3 rounded-xl bg-card hover:bg-muted transition-colors border border-border"
-                    >
-                      {price}
-                    </button>
-                  ))}
-                </div>
+            <div className="space-y-4">
+              {/* Precio */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Precio</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
               </div>
 
-              <div>
-                <h4 className="font-semibold mb-3">Tiempo de entrega</h4>
-                <div className="space-y-2">
-                  {["< 20 min", "20-30 min", "30-45 min", "> 45 min"].map((time) => (
-                    <button
-                      key={time}
-                      className="w-full text-left px-4 py-3 rounded-xl bg-card hover:bg-muted transition-colors border border-border"
-                    >
-                      {time}
-                    </button>
-                  ))}
-                </div>
+              {/* Tiempo de entrega */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Tiempo de entrega</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
               </div>
 
-              <div>
-                <h4 className="font-semibold mb-3">Calificación</h4>
-                <div className="space-y-2">
-                  {["4.5+", "4.0+", "3.5+", "Todas"].map((rating) => (
-                    <button
-                      key={rating}
-                      className="w-full text-left px-4 py-3 rounded-xl bg-card hover:bg-muted transition-colors border border-border"
-                    >
-                      {rating}
-                    </button>
-                  ))}
-                </div>
+              {/* Calificación */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Calificación</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Tipo de comida */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Tipo de comida</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Distancia */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Distancia</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Ofertas */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Ofertas y descuentos</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Método de pago */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button 
+                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
+                  onClick={() => {}}
+                >
+                  <span>Método de pago</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
               </div>
 
               <Button 
                 onClick={() => setShowFilters(false)}
-                className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90"
+                className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 mt-6"
               >
-                Aplicar Filtros
+                Confirmar Filtros
               </Button>
             </div>
           </div>

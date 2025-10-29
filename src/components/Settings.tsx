@@ -1,11 +1,27 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import { 
-  ArrowLeft, ChevronRight, User, Bell, Lock, Globe, 
-  CreditCard, HelpCircle, Shield, Moon, LogOut 
+  ChevronRight, 
+  User, 
+  Bell, 
+  Lock, 
+  Globe, 
+  CreditCard, 
+  HelpCircle, 
+  Shield, 
+  Moon, 
+  LogOut 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import AccountSettings from "./settings/AccountSettings";
+import NotificationSettings from "./settings/NotificationSettings";
+import PrivacySettings from "./settings/PrivacySettings";
+import LanguageSettings from "./settings/LanguageSettings";
+import PaymentSettings from "./settings/PaymentSettings";
+import SecuritySettings from "./settings/SecuritySettings";
+import HelpSettings from "./settings/HelpSettings";
 
 interface SettingsProps {
   onBack: () => void;
@@ -14,6 +30,7 @@ interface SettingsProps {
 const Settings = ({ onBack }: SettingsProps) => {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const [currentScreen, setCurrentScreen] = useState<string | null>(null);
 
   const settingsOptions = [
     { id: "account", icon: User, label: "Cuenta", description: "Gestiona tu información personal" },
@@ -24,6 +41,14 @@ const Settings = ({ onBack }: SettingsProps) => {
     { id: "security", icon: Shield, label: "Seguridad", description: "Contraseña y autenticación" },
     { id: "help", icon: HelpCircle, label: "Ayuda", description: "Centro de ayuda y soporte" },
   ];
+
+  if (currentScreen === "account") return <AccountSettings onBack={() => setCurrentScreen(null)} />;
+  if (currentScreen === "notifications") return <NotificationSettings onBack={() => setCurrentScreen(null)} />;
+  if (currentScreen === "privacy") return <PrivacySettings onBack={() => setCurrentScreen(null)} />;
+  if (currentScreen === "language") return <LanguageSettings onBack={() => setCurrentScreen(null)} />;
+  if (currentScreen === "payment") return <PaymentSettings onBack={() => setCurrentScreen(null)} />;
+  if (currentScreen === "security") return <SecuritySettings onBack={() => setCurrentScreen(null)} />;
+  if (currentScreen === "help") return <HelpSettings onBack={() => setCurrentScreen(null)} />;
 
   return (
     <div className="fixed inset-0 z-50 bg-background overflow-y-auto">
@@ -73,6 +98,7 @@ const Settings = ({ onBack }: SettingsProps) => {
           {settingsOptions.map((option) => (
             <motion.button
               key={option.id}
+              onClick={() => setCurrentScreen(option.id)}
               whileTap={{ scale: 0.98 }}
               className="w-full bg-card rounded-2xl p-4 border border-border hover:border-primary/50 transition-all flex items-center gap-3"
             >

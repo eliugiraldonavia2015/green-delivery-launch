@@ -183,6 +183,14 @@ const Feed = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState<{ name: string; avatar: string } | null>(null);
   const [showShop, setShowShop] = useState(false);
   const [showShopLoading, setShowShopLoading] = useState(false);
+
+  const handleCartClick = () => {
+    setShowShopLoading(true);
+    setTimeout(() => {
+      setShowShopLoading(false);
+      setShowShop(true);
+    }, 800);
+  };
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const isScrolling = useRef(false);
@@ -622,12 +630,24 @@ const FeedContent = ({
                       </p>
                       {!following.includes(video.id) && (
                         <motion.button
-                          onClick={(e) => handleFollowFromFeed(video.id, e)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setFollowing([...following, video.id]);
+                          }}
                           className="px-4 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold rounded-full transition-colors"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
                           Seguir
+                        </motion.button>
+                      )}
+                      {following.includes(video.id) && (
+                        <motion.button
+                          className="px-4 py-1 bg-muted text-muted-foreground text-sm font-bold rounded-full"
+                          initial={{ scale: 1 }}
+                          animate={{ scale: [1, 1.1, 1] }}
+                        >
+                          Siguiendo
                         </motion.button>
                       )}
                     </div>
