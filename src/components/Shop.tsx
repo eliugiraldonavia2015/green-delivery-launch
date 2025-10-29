@@ -153,41 +153,6 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       </div>
 
-      {/* Category Icons */}
-      <div className="px-6 mb-6 overflow-x-auto no-scrollbar">
-        <div className="flex gap-4 min-w-max">
-          {categoryIcons.map((cat) => (
-            <button
-              key={cat.name}
-              className="flex flex-col items-center gap-2 min-w-[70px]"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-card border border-border flex items-center justify-center text-3xl hover:scale-105 transition-transform">
-                {cat.emoji}
-              </div>
-              <span className="text-xs text-muted-foreground">{cat.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Promo Banner */}
-      <div className="px-6 mb-4">
-        <div className="relative h-40 rounded-3xl overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1"
-            alt="Promo"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex flex-col justify-center px-6">
-            <p className="text-3xl font-bold text-white mb-1">Get 50% Off</p>
-            <p className="text-sm text-white/90 mb-3">en tu primera orden sobre $25</p>
-            <Button className="w-32 bg-primary hover:bg-primary/90 text-primary-foreground">
-              Ordenar ahora
-            </Button>
-          </div>
-        </div>
-      </div>
-
       {/* Popular Section - 2 rows, 10 columns */}
       <div className="px-6 mb-6">
         <h2 className="text-xl font-bold mb-4">Popular cerca de ti</h2>
@@ -296,7 +261,7 @@ const Shop = ({ onClose }: ShopProps) => {
           
           <motion.button
             onClick={() => {
-              // TODO: Implement notifications
+              // Navigate to notifications - same functionality as Feed
             }}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
@@ -341,7 +306,7 @@ const Shop = ({ onClose }: ShopProps) => {
 
           <motion.button
             onClick={() => {
-              // TODO: Implement messages
+              // Navigate to messages - same functionality as Feed
             }}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
@@ -353,7 +318,7 @@ const Shop = ({ onClose }: ShopProps) => {
 
           <motion.button
             onClick={() => {
-              // TODO: Implement profile
+              // Navigate to profile - same functionality as Feed
             }}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}

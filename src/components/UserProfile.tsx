@@ -12,11 +12,20 @@ interface UserProfileProps {
 const UserProfile = ({ onBack }: UserProfileProps) => {
   const [showSettings, setShowSettings] = useState(false);
   
-  const mockPosts = Array.from({ length: 12 }, (_, i) => ({
-    id: i + 1,
-    image: `https://images.unsplash.com/photo-${1565299585323 + i}?w=400&h=400&fit=crop`,
-    likes: Math.floor(Math.random() * 50000) + 1000
-  }));
+  const mockPosts = [
+    { id: 1, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=400&fit=crop", likes: 15420 },
+    { id: 2, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=400&fit=crop", likes: 23100 },
+    { id: 3, image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=400&fit=crop", likes: 18900 },
+    { id: 4, image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop", likes: 31200 },
+    { id: 5, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop", likes: 27500 },
+    { id: 6, image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=400&fit=crop", likes: 19800 },
+    { id: 7, image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=400&fit=crop", likes: 42300 },
+    { id: 8, image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop", likes: 16700 },
+    { id: 9, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=400&fit=crop", likes: 21400 },
+    { id: 10, image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=400&fit=crop", likes: 38200 },
+    { id: 11, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=400&fit=crop", likes: 29500 },
+    { id: 12, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop", likes: 33100 }
+  ];
 
   if (showSettings) {
     return <Settings onBack={() => setShowSettings(false)} />;

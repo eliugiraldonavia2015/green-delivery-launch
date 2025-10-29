@@ -20,6 +20,7 @@ import CommentOverlay from "@/components/CommentOverlay";
 import ShareOverlay from "@/components/ShareOverlay";
 import MusicPlayerOverlay from "@/components/MusicPlayerOverlay";
 import Shop from "@/components/Shop";
+import chefLoading from "@/assets/chef-loading.jpg";
 
 interface Video {
   id: number;
@@ -456,29 +457,36 @@ const Feed = () => {
       />
 
       {showShopLoading && (
-        <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
-          <div className="text-center">
-            <motion.div
-              animate={{ rotate: [0, 360], scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-24 h-24 mx-auto mb-4"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[60] bg-background flex items-center justify-center"
+        >
+          <div className="flex flex-col items-center gap-4">
+            <motion.img
+              src={chefLoading}
+              alt="Loading"
+              className="w-32 h-32 rounded-full"
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            <motion.p
+              className="text-lg font-semibold text-foreground"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="hsl(var(--primary))"/>
-                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="hsl(var(--accent))"/>
-                <motion.path 
-                  d="M12 8v4l3 3" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth="2" 
-                  strokeLinecap="round"
-                  animate={{ pathLength: [0, 1, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-              </svg>
-            </motion.div>
-            <p className="text-muted-foreground">Preparando tu experiencia...</p>
+              Preparando tu experiencia...
+            </motion.p>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {showShop && <Shop onClose={() => setShowShop(false)} />}
@@ -640,7 +648,8 @@ const FeedContent = ({
                       )}
                       {following.includes(video.id) && (
                         <motion.button
-                          className="px-4 py-1 bg-muted text-muted-foreground text-sm font-bold rounded-full"
+                          onClick={(e) => handleFollowFromFeed(video.id, e)}
+                          className="px-4 py-1 bg-accent hover:bg-accent/90 text-accent-foreground text-sm font-bold rounded-full transition-colors"
                           initial={{ scale: 1 }}
                           animate={{ scale: [1, 1.1, 1] }}
                         >
