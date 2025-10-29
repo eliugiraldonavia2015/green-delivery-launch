@@ -137,70 +137,18 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
     setShowProductDetail(true);
   };
 
-  const showCompactHeader = scrollY > 200;
+  const showCompactHeader = scrollY > 280;
 
   return (
     <div className="fixed inset-0 z-30 bg-background overflow-hidden flex flex-col">
-      {/* Compact Header (appears on scroll) */}
-      <AnimatePresence>
-        {showCompactHeader && (
-          <motion.div
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            exit={{ y: -100 }}
-            className="absolute top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
-          >
-            <div className="flex items-center px-4 py-3 gap-3">
-              <button
-                onClick={onBack}
-                className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              
-              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                <img src={restaurant.profileImage} alt={restaurant.name} className="w-full h-full object-cover" />
-              </div>
-              
-              <h3 className="font-bold text-lg flex-1 truncate">{restaurant.name}</h3>
-              
-              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
-                <Share2 className="w-5 h-5" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
-                <Search className="w-5 h-5" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
-                <Bookmark className="w-5 h-5" />
-              </button>
-            </div>
-            
-            {/* Category Menu in Compact Header */}
-            <ScrollArea className="w-full border-t border-border">
-              <div className="flex gap-2 px-4 py-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
-                      selectedCategory === cat
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-card text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </ScrollArea>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Hero Section with Cover */}
       <motion.div 
         className="relative h-64 flex-shrink-0"
-        animate={{ opacity: showCompactHeader ? 0 : 1, y: showCompactHeader ? -100 : 0 }}
+        animate={{ 
+          opacity: showCompactHeader ? 0 : 1, 
+          y: showCompactHeader ? -280 : 0,
+          height: showCompactHeader ? "0px" : "256px"
+        }}
         transition={{ duration: 0.3 }}
       >
         <div 
@@ -246,7 +194,11 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
       {/* Info Cards */}
       <motion.div
         className="px-4 pt-20 pb-4 flex-shrink-0"
-        animate={{ opacity: showCompactHeader ? 0 : 1, y: showCompactHeader ? -50 : 0 }}
+        animate={{ 
+          opacity: showCompactHeader ? 0 : 1, 
+          y: showCompactHeader ? -280 : 0,
+          height: showCompactHeader ? "0px" : "auto"
+        }}
         transition={{ duration: 0.3 }}
       >
         <div className="space-y-3">
@@ -285,25 +237,57 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
         </div>
       </motion.div>
 
-      {/* Category Menu */}
-      <div className="px-4 pb-4 flex-shrink-0">
-        <ScrollArea className="w-full">
-          <div className="flex gap-2 pb-2">
-            {categories.map((cat) => (
+      {/* Sticky Category Menu */}
+      <div 
+        className={`flex-shrink-0 transition-all duration-300 ${
+          showCompactHeader ? "sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border" : ""
+        }`}
+      >
+        <div className="px-4 py-3">
+          {showCompactHeader && (
+            <div className="flex items-center gap-3 mb-3">
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
-                  selectedCategory === cat
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card text-foreground hover:bg-muted"
-                }`}
+                onClick={onBack}
+                className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
               >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                <ArrowLeft className="w-5 h-5" />
               </button>
-            ))}
-          </div>
-        </ScrollArea>
+              
+              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <img src={restaurant.profileImage} alt={restaurant.name} className="w-full h-full object-cover" />
+              </div>
+              
+              <h3 className="font-bold text-lg flex-1 truncate">{restaurant.name}</h3>
+              
+              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
+                <Share2 className="w-5 h-5" />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
+                <Search className="w-5 h-5" />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
+                <Bookmark className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+          <ScrollArea className="w-full">
+            <div className="flex gap-2 pb-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+                    selectedCategory === cat
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
       </div>
 
       {/* Menu Items */}
@@ -317,13 +301,13 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
             return (
               <div key={category} className="mb-6">
                 <h3 className="px-4 text-lg font-bold mb-3 capitalize">{category}</h3>
-                <ScrollArea className="w-full">
-                  <div className="flex gap-3 px-4">
+                <div className="overflow-x-auto">
+                  <div className="flex gap-3 px-4 pb-2">
                     {categoryItems.map(item => (
                       <motion.div
                         key={item.id}
                         onClick={() => handleProductClick(item)}
-                        className={`flex-shrink-0 w-36 bg-card rounded-2xl overflow-hidden border-2 transition-all cursor-pointer hover:border-primary/50 ${
+                        className={`flex-shrink-0 w-32 bg-card rounded-2xl overflow-hidden border-2 transition-all cursor-pointer hover:border-primary/50 ${
                           highlightedDishId === item.id ? 'border-primary shadow-glow' : 'border-border'
                         }`}
                         whileHover={{ scale: 1.05 }}
@@ -378,44 +362,42 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
                       </motion.div>
                     ))}
                   </div>
-                </ScrollArea>
+                </div>
               </div>
             );
           })}
 
-          {/* Recommendations Section */}
-          <div className="pt-6 px-4">
-            <h3 className="text-xl font-bold text-foreground mb-4">
-              Porque seleccionaste {restaurant.name}
-            </h3>
-            <ScrollArea className="w-full">
-              <div className="flex gap-3 pb-4">
-                {recommendedDishes.map((dish) => (
+          {/* Recommended Section */}
+          <div className="mb-6">
+            <h3 className="px-4 text-lg font-bold mb-3">Recomendaciones especiales</h3>
+            <div className="overflow-x-auto">
+              <div className="flex gap-3 px-4 pb-2">
+                {recommendedDishes.map(item => (
                   <motion.div
-                    key={dish.id}
-                    onClick={() => handleProductClick(dish)}
+                    key={item.id}
+                    onClick={() => handleProductClick(item)}
                     className="flex-shrink-0 w-36 bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all cursor-pointer"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <div className="aspect-square overflow-hidden">
-                      <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="p-3">
-                      <h4 className="font-semibold text-sm mb-1 truncate">{dish.name}</h4>
-                      <p className="text-xs text-muted-foreground mb-2 truncate">{dish.restaurant}</p>
+                      <h4 className="font-semibold text-sm mb-1 truncate">{item.name}</h4>
+                      <p className="text-xs text-muted-foreground mb-2 truncate">{item.restaurant}</p>
                       <div className="flex items-center justify-between">
-                        <span className="text-primary font-bold text-sm">${dish.price}</span>
+                        <span className="text-primary font-bold text-sm">${item.price}</span>
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="w-3 h-3" />
-                          <span>{dish.deliveryTime}min</span>
+                          <span>{item.deliveryTime}min</span>
                         </div>
                       </div>
                     </div>
                   </motion.div>
                 ))}
               </div>
-            </ScrollArea>
+            </div>
           </div>
         </div>
       </ScrollArea>

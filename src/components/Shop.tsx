@@ -62,7 +62,16 @@ const Shop = ({ onClose }: ShopProps) => {
             <MapPin className="w-5 h-5 text-primary" />
             <span className="text-sm font-medium">Tu ubicación</span>
           </div>
-          <span className="text-xl font-bold">Foodtook</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xl font-bold">Foodtook</span>
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary">
+              <img 
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" 
+                alt="User" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -143,11 +152,12 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       </div>
 
-      {/* Popular Section */}
-      <div className="px-6 pb-32">
+      {/* Popular Section - 2 rows, 10 columns */}
+      <div className="px-6 mb-6">
         <h2 className="text-xl font-bold mb-4">Popular cerca de ti</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {popularItems.map((item) => (
+        <div className="overflow-x-auto">
+          <div className="grid grid-rows-2 grid-flow-col gap-3 pb-2" style={{ gridTemplateColumns: 'repeat(10, 160px)' }}>
+            {popularItems.map((item) => (
             <motion.div
               key={item.id}
               whileTap={{ scale: 0.95 }}
@@ -172,9 +182,58 @@ const Shop = ({ onClose }: ShopProps) => {
                 </div>
               </div>
             </motion.div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Additional Sections - 1 row, 10 columns each */}
+      {["Nuevos Restaurantes", "Ofertas Especiales", "Cocina Internacional", "Comida Rápida", "Postres Deliciosos"].map((sectionTitle, idx) => (
+        <div key={idx} className="px-6 mb-6">
+          <h2 className="text-xl font-bold mb-4">{sectionTitle}</h2>
+          <div className="overflow-x-auto">
+            <div className="flex gap-3 pb-2">
+              {Array.from({ length: 10 }, (_, i) => ({
+                id: idx * 10 + i + 100,
+                name: `${sectionTitle} ${i + 1}`,
+                restaurant: `Restaurante ${i + 1}`,
+                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+                rating: (4 + Math.random()).toFixed(1),
+                discount: Math.floor(Math.random() * 30 + 10),
+                price: (15 + Math.random() * 20).toFixed(2),
+                deliveryTime: `${20 + Math.floor(Math.random() * 20)} min`
+              })).map((item) => (
+                <motion.div
+                  key={item.id}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex-shrink-0 w-40 bg-card rounded-2xl overflow-hidden border border-border"
+                >
+                  <div className="relative h-32">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
+                      <Star className="w-3 h-3 text-accent fill-accent" />
+                      <span className="text-xs text-white font-semibold">{item.rating}</span>
+                    </div>
+                    <div className="absolute bottom-2 left-2 bg-accent text-accent-foreground rounded-full px-2 py-1 text-xs font-bold">
+                      {item.discount}% off
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-sm mb-1 truncate">{item.name}</h3>
+                    <p className="text-xs text-muted-foreground mb-2 truncate">{item.restaurant}</p>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-primary">${item.price}</span>
+                      <span className="text-muted-foreground">{item.deliveryTime}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <div className="h-32" />
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-20 bg-black/90 backdrop-blur-lg border-t border-white/10 pb-safe">
@@ -186,10 +245,11 @@ const Shop = ({ onClose }: ShopProps) => {
             whileTap={{ scale: 0.95 }}
           >
             <Home className="w-6 h-6 text-white" />
-            <span className="text-white text-xs">Inicio</span>
+            <span className="text-white text-xs">Feed</span>
           </motion.button>
           
           <motion.button
+            onClick={() => {/* Notifications */}}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -231,6 +291,7 @@ const Shop = ({ onClose }: ShopProps) => {
           </motion.button>
 
           <motion.button
+            onClick={() => {/* Messages */}}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -240,6 +301,7 @@ const Shop = ({ onClose }: ShopProps) => {
           </motion.button>
 
           <motion.button
+            onClick={() => {/* Profile */}}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

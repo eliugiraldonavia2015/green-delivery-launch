@@ -36,7 +36,7 @@ const MusicPlayerOverlay = ({ isOpen, onClose, musicName, artist }: MusicPlayerO
           {/* Overlay */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: "30%" }}
+            animate={{ y: 0 }}
             exit={{ y: "100%" }}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}

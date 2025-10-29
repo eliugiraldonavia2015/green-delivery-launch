@@ -58,7 +58,7 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
   if (!product) return null;
 
   const total = product.price * quantity;
-  const showStickyHeader = scrollY > 400;
+  const showStickyHeader = scrollY > 200;
 
   const toggleSide = (id: number) => {
     setSelectedSides(prev => {
@@ -101,9 +101,10 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
             <AnimatePresence>
               {showStickyHeader && (
                 <motion.div
-                  initial={{ y: -100 }}
-                  animate={{ y: 0 }}
-                  exit={{ y: -100 }}
+                  initial={{ y: -100, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -100, opacity: 0 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
                   className="absolute top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between"
                 >
                   <div className="flex-1 min-w-0">

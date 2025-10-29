@@ -1,18 +1,26 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Settings, Grid3x3, Heart, Bookmark, MapPin } from "lucide-react";
+import { ArrowLeft, Settings as SettingsIcon, Grid3x3, Heart, Bookmark, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Settings from "./Settings";
 
 interface UserProfileProps {
   onBack: () => void;
 }
 
 const UserProfile = ({ onBack }: UserProfileProps) => {
+  const [showSettings, setShowSettings] = useState(false);
+  
   const mockPosts = Array.from({ length: 12 }, (_, i) => ({
     id: i + 1,
     image: `https://images.unsplash.com/photo-${1565299585323 + i}?w=400&h=400&fit=crop`,
     likes: Math.floor(Math.random() * 50000) + 1000
   }));
+
+  if (showSettings) {
+    return <Settings onBack={() => setShowSettings(false)} />;
+  }
 
   return (
     <div className="fixed inset-0 z-40 bg-background overflow-y-auto">
@@ -26,9 +34,12 @@ const UserProfile = ({ onBack }: UserProfileProps) => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h2 className="font-bold text-lg">Mi Perfil</h2>
-          <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-muted transition-colors">
-            <Settings className="w-5 h-5" />
-          </button>
+          <motion.button
+            onClick={() => setShowSettings(true)}
+            className="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <SettingsIcon className="w-5 h-5" />
+          </motion.button>
         </div>
       </div>
 
@@ -74,7 +85,7 @@ const UserProfile = ({ onBack }: UserProfileProps) => {
 
         {/* Action Buttons */}
         <div className="flex gap-3 mb-6">
-          <Button className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity">
+          <Button className="flex-1 bg-primary hover:bg-primary/90">
             Editar Perfil
           </Button>
           <Button variant="outline" className="flex-1">

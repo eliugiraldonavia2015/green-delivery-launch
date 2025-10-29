@@ -212,17 +212,11 @@ const Feed = () => {
 
   const handleFollowFromFeed = (videoId: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setFollowing(prev => {
-      const newFollowing = prev.includes(videoId) 
+    setFollowing(prev => 
+      prev.includes(videoId) 
         ? prev.filter(id => id !== videoId)
-        : [...prev, videoId];
-      
-      // Redirect to home when following from feed
-      if (!prev.includes(videoId)) {
-        setTimeout(() => navigate("/home"), 300);
-      }
-      return newFollowing;
-    });
+        : [...prev, videoId]
+    );
   };
 
   // Loading simulation
