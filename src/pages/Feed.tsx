@@ -630,10 +630,7 @@ const FeedContent = ({
                       </p>
                       {!following.includes(video.id) && (
                         <motion.button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setFollowing([...following, video.id]);
-                          }}
+                          onClick={(e) => handleFollowFromFeed(video.id, e)}
                           className="px-4 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold rounded-full transition-colors"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
