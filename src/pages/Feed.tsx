@@ -352,12 +352,16 @@ const Feed = () => {
           location: mockRestaurant.location,
           rating: mockRestaurant.rating
         }}
-        onBack={() => setShowMenu(false)}
+        onBack={() => {
+          setShowMenu(false);
+          setHighlightedDish(undefined);
+        }}
         onCheckout={() => {
           setShowMenu(false);
           setShowCheckout(true);
         }}
         highlightedDishId={highlightedDish}
+        autoOpenDish={highlightedDish !== undefined}
       />
     );
   }
@@ -393,6 +397,8 @@ const Feed = () => {
             setShowMusicPlayer={setShowMusicPlayer}
             setCurrentMusicInfo={setCurrentMusicInfo}
             setHighlightedDish={setHighlightedDish}
+            setShowShop={setShowShop}
+            setShowShopLoading={setShowShopLoading}
           />
         </div>
       </div>
@@ -425,6 +431,8 @@ const Feed = () => {
           setShowMusicPlayer={setShowMusicPlayer}
           setCurrentMusicInfo={setCurrentMusicInfo}
           setHighlightedDish={setHighlightedDish}
+          setShowShop={setShowShop}
+          setShowShopLoading={setShowShopLoading}
         />
       </div>
 
@@ -451,33 +459,6 @@ const Feed = () => {
             <motion.div
               animate={{ rotate: [0, 360], scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-24 h-24 mx-auto mb-4"
-            >
-              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="hsl(var(--primary))"/>
-                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="hsl(var(--accent))"/>
-              </svg>
-            </motion.div>
-            <p className="text-muted-foreground">Preparando tu experiencia...</p>
-          </div>
-        </div>
-      )}
-
-      {showShop && <Shop onClose={() => setShowShop(false)} />}
-
-      {showShopLoading && (
-        <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
-          <div className="text-center">
-            <motion.div
-              animate={{ 
-                rotate: [0, 360],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
               className="w-24 h-24 mx-auto mb-4"
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
@@ -529,6 +510,8 @@ interface FeedContentProps {
   setShowMusicPlayer: (show: boolean) => void;
   setCurrentMusicInfo: (info: { name: string; artist: string }) => void;
   setHighlightedDish: (id: number | undefined) => void;
+  setShowShop: (show: boolean) => void;
+  setShowShopLoading: (loading: boolean) => void;
 }
 
 const FeedContent = ({
@@ -556,7 +539,9 @@ const FeedContent = ({
   setShowShare,
   setShowMusicPlayer,
   setCurrentMusicInfo,
-  setHighlightedDish
+  setHighlightedDish,
+  setShowShop,
+  setShowShopLoading
 }: FeedContentProps) => {
   return (
     <div className="relative h-full w-full overflow-hidden">

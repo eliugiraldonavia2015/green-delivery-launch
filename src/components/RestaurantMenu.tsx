@@ -111,11 +111,13 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
 
   useEffect(() => {
     if (autoOpenDish && highlightedDishId) {
-      const highlightedItem = [...mockMenuItems, ...recommendedDishes].find(i => i.id === highlightedDishId);
-      if (highlightedItem) {
-        setSelectedProduct(highlightedItem);
-        setShowProductDetail(true);
-      }
+      setTimeout(() => {
+        const highlightedItem = [...mockMenuItems, ...recommendedDishes].find(i => i.id === highlightedDishId);
+        if (highlightedItem) {
+          setSelectedProduct(highlightedItem);
+          setShowProductDetail(true);
+        }
+      }, 100);
     }
   }, [highlightedDishId, autoOpenDish]);
 
