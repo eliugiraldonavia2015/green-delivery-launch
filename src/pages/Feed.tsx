@@ -801,31 +801,12 @@ const FeedContent = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="relative group">
-              <motion.div
-                className="absolute inset-0 rounded-2xl blur-lg"
-                style={{
-                  background: "linear-gradient(135deg, #FF0050, #00F2EA, #FF0050)",
-                }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <div className="relative w-14 h-14 rounded-2xl bg-black flex items-center justify-center group-hover:scale-110 transition-transform border-2 border-white/20">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
-                  <defs>
-                    <linearGradient id="discoverGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FF0050" />
-                      <stop offset="50%" stopColor="#00F2EA" />
-                      <stop offset="100%" stopColor="#FF0050" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#discoverGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                  <path d="M2 17L12 22L22 17" stroke="url(#discoverGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 12L12 17L22 12" stroke="url(#discoverGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+            <div className="relative">
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-glow">
+                <ShoppingCart className="w-7 h-7 text-primary-foreground" />
               </div>
             </div>
-            <span className="text-white text-xs">Descubrir</span>
+            <span className="text-white text-xs">Carrito</span>
           </motion.button>
 
           <motion.button

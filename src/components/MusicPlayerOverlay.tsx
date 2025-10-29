@@ -14,6 +14,12 @@ const MusicPlayerOverlay = ({ isOpen, onClose, musicName, artist }: MusicPlayerO
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
+  const handleDragEnd = (event: any, info: any) => {
+    if (info.offset.y > 100) {
+      onClose();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -30,13 +36,22 @@ const MusicPlayerOverlay = ({ isOpen, onClose, musicName, artist }: MusicPlayerO
           {/* Overlay */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: 0 }}
+            animate={{ y: "30%" }}
             exit={{ y: "100%" }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.2}
+            onDragEnd={handleDragEnd}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl border-t-2 border-primary"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl border-t-2 border-primary h-[70vh]"
           >
+            {/* Drag Handle */}
+            <div className="flex justify-center py-3">
+              <div className="w-12 h-1 bg-border rounded-full" />
+            </div>
+
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+            <div className="flex items-center justify-between px-6 py-3 border-b border-border">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                   <Music className="w-5 h-5 text-primary" />
@@ -52,11 +67,11 @@ const MusicPlayerOverlay = ({ isOpen, onClose, musicName, artist }: MusicPlayerO
             </div>
 
             {/* Music Info */}
-            <div className="p-8 text-center">
+            <div className="p-6 text-center overflow-y-auto" style={{ maxHeight: 'calc(70vh - 120px)' }}>
               <motion.div
                 animate={{ rotate: isPlaying ? 360 : 0 }}
                 transition={{ duration: 3, repeat: isPlaying ? Infinity : 0, ease: "linear" }}
-                className="w-56 h-56 mx-auto mb-8 rounded-full bg-card border-4 border-primary/30 p-2 shadow-glow"
+                className="w-40 h-40 mx-auto mb-6 rounded-full bg-card border-4 border-primary/30 p-2 shadow-glow"
               >
                 <div className="w-full h-full rounded-full bg-muted flex items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-primary/5" />
@@ -64,11 +79,11 @@ const MusicPlayerOverlay = ({ isOpen, onClose, musicName, artist }: MusicPlayerO
                 </div>
               </motion.div>
 
-              <h3 className="text-3xl font-bold mb-3">{musicName}</h3>
-              <p className="text-lg text-muted-foreground mb-8">{artist}</p>
+              <h3 className="text-2xl font-bold mb-2">{musicName}</h3>
+              <p className="text-base text-muted-foreground mb-6">{artist}</p>
 
               {/* Progress Bar */}
-              <div className="mb-8">
+              <div className="mb-6">
                 <div className="h-1 bg-muted rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-primary"
@@ -84,7 +99,7 @@ const MusicPlayerOverlay = ({ isOpen, onClose, musicName, artist }: MusicPlayerO
               </div>
 
               {/* Controls */}
-              <div className="flex items-center justify-center gap-8 mb-10">
+              <div className="flex items-center justify-center gap-6 mb-6">
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setIsLiked(!isLiked)}

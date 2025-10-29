@@ -33,54 +33,26 @@ interface RestaurantMenuProps {
 }
 
 const mockMenuItems: MenuItem[] = [
-  {
-    id: 1,
-    name: "Truffle Pasta",
-    description: "Pasta cremosa con trufa negra y parmesano",
-    price: 18.99,
-    image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=300&fit=crop",
-    category: "todo"
-  },
-  {
-    id: 2,
-    name: "Margherita Pizza",
-    description: "Pizza artesanal con mozzarella fresca y albahaca",
-    price: 15.99,
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop",
-    category: "popular"
-  },
-  {
-    id: 3,
-    name: "Caesar Salad",
-    description: "Lechuga romana, crutones y aderezo césar casero",
-    price: 9.99,
-    image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop",
-    category: "entradas"
-  },
-  {
-    id: 4,
-    name: "Calamari Fritti",
-    description: "Anillos de calamar crujientes con salsa marinara",
-    price: 12.99,
-    image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop",
-    category: "entradas"
-  },
-  {
-    id: 5,
-    name: "Limonada Natural",
-    description: "Refrescante limonada hecha al momento",
-    price: 3.99,
-    image: "https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=400&h=300&fit=crop",
-    category: "bebidas"
-  },
-  {
-    id: 6,
-    name: "Tiramisu",
-    description: "Postre italiano clásico con café y mascarpone",
-    price: 7.99,
-    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop",
-    category: "especiales"
-  }
+  { id: 1, name: "Truffle Pasta", description: "Pasta cremosa con trufa negra", price: 18.99, image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=300&fit=crop", category: "todo" },
+  { id: 2, name: "Margherita Pizza", description: "Pizza con mozzarella fresca", price: 15.99, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop", category: "popular" },
+  { id: 3, name: "Caesar Salad", description: "Lechuga con aderezo césar", price: 9.99, image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop", category: "entradas" },
+  { id: 4, name: "Calamari Fritti", description: "Anillos de calamar crujientes", price: 12.99, image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop", category: "entradas" },
+  { id: 5, name: "Limonada Natural", description: "Limonada hecha al momento", price: 3.99, image: "https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=400&h=300&fit=crop", category: "bebidas" },
+  { id: 6, name: "Tiramisu", description: "Postre italiano clásico", price: 7.99, image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop", category: "especiales" },
+  { id: 7, name: "Burger Deluxe", description: "Hamburguesa con queso", price: 14.99, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop", category: "popular" },
+  { id: 8, name: "Chicken Wings", description: "Alitas picantes", price: 11.99, image: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=400&h=300&fit=crop", category: "entradas" },
+  { id: 9, name: "Sopa Minestrone", description: "Sopa italiana de vegetales", price: 8.99, image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop", category: "sopas" },
+  { id: 10, name: "Ribeye Steak", description: "Carne premium 300g", price: 28.99, image: "https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=300&fit=crop", category: "carnes" },
+  { id: 11, name: "Coca-Cola", description: "Refresco 355ml", price: 2.50, image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=300&fit=crop", category: "bebidas" },
+  { id: 12, name: "Combo Especial", description: "Plato + bebida + postre", price: 19.99, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop", category: "combos" },
+  { id: 13, name: "Fettuccine Alfredo", description: "Pasta con salsa Alfredo", price: 16.99, image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=400&h=300&fit=crop", category: "popular" },
+  { id: 14, name: "Bruschetta", description: "Pan tostado con tomate", price: 7.50, image: "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=400&h=300&fit=crop", category: "entradas" },
+  { id: 15, name: "Sopa de Tomate", description: "Sopa cremosa de tomate", price: 6.99, image: "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&h=300&fit=crop", category: "sopas" },
+  { id: 16, name: "T-Bone Steak", description: "Carne premium 400g", price: 32.99, image: "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=400&h=300&fit=crop", category: "carnes" },
+  { id: 17, name: "Té Helado", description: "Té frío con limón", price: 3.50, image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop", category: "bebidas" },
+  { id: 18, name: "Combo Pareja", description: "2 platos + 2 bebidas", price: 35.99, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop", category: "combos" },
+  { id: 19, name: "Cannoli", description: "Postre siciliano con ricotta", price: 8.50, image: "https://images.unsplash.com/photo-1517686748-519e5a6f7e95?w=400&h=300&fit=crop", category: "especiales" },
+  { id: 20, name: "Panna Cotta", description: "Postre italiano cremoso", price: 7.50, image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop", category: "especiales" }
 ];
 
 const recommendedDishes: MenuItem[] = [
@@ -226,7 +198,11 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
       </AnimatePresence>
 
       {/* Hero Section with Cover */}
-      <div className="relative h-64 flex-shrink-0">
+      <motion.div 
+        className="relative h-64 flex-shrink-0"
+        animate={{ opacity: showCompactHeader ? 0 : 1, y: showCompactHeader ? -100 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${restaurant.coverImage || restaurant.profileImage})` }}
@@ -265,28 +241,49 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Info Cards */}
-      <div className="px-4 pt-20 pb-4 flex-shrink-0">
-        <div className="bg-card rounded-2xl p-4 border border-border grid grid-cols-3 gap-4">
-          <div className="flex flex-col items-center gap-1">
-            <Clock className="w-5 h-5 text-primary" />
-            <span className="text-xs text-muted-foreground">Tiempo</span>
-            <span className="text-sm font-bold">25-35 min</span>
+      <motion.div
+        className="px-4 pt-20 pb-4 flex-shrink-0"
+        animate={{ opacity: showCompactHeader ? 0 : 1, y: showCompactHeader ? -50 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="space-y-3">
+          <div className="bg-card rounded-2xl p-4 border border-border grid grid-cols-3 gap-4">
+            <div className="flex flex-col items-center gap-1">
+              <Clock className="w-5 h-5 text-primary" />
+              <span className="text-xs text-muted-foreground">Tiempo</span>
+              <span className="text-sm font-bold">25-35 min</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <DollarSign className="w-5 h-5 text-primary" />
+              <span className="text-xs text-muted-foreground">Envío</span>
+              <span className="text-sm font-bold">$2.99</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Star className="w-5 h-5 text-accent fill-accent" />
+              <span className="text-xs text-muted-foreground">Rating</span>
+              <span className="text-sm font-bold">{restaurant.rating || 4.8}</span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <DollarSign className="w-5 h-5 text-primary" />
-            <span className="text-xs text-muted-foreground">Envío</span>
-            <span className="text-sm font-bold">$2.99</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <Star className="w-5 h-5 text-accent fill-accent" />
-            <span className="text-xs text-muted-foreground">Rating</span>
-            <span className="text-sm font-bold">{restaurant.rating || 4.8}</span>
-          </div>
+          
+          {restaurant.location && (
+            <div className="bg-card rounded-2xl p-4 border border-border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Sucursal seleccionada</p>
+                  <p className="font-semibold text-sm">{restaurant.location}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground mb-1">Distancia</p>
+                  <p className="font-semibold text-sm text-primary">2.3 km</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Category Menu */}
       <div className="px-4 pb-4 flex-shrink-0">
@@ -311,71 +308,83 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
 
       {/* Menu Items */}
       <ScrollArea className="flex-1">
-        <div ref={scrollRef} className="px-4 space-y-3 pb-32">
-          {filteredItems.map(item => (
-            <motion.div
-              key={item.id}
-              onClick={() => handleProductClick(item)}
-              className={`bg-card rounded-2xl overflow-hidden border-2 transition-all cursor-pointer hover:border-primary/50 ${
-                highlightedDishId === item.id ? 'border-primary shadow-glow' : 'border-border'
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="flex gap-4 p-4">
-                <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-foreground mb-1">{item.name}</h4>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                    {item.description}
-                  </p>
-                  <p className="text-lg font-bold text-primary">${item.price}</p>
-                </div>
-
-                <div className="flex items-end">
-                  {cart[item.id] ? (
-                    <div className="flex items-center gap-2 bg-muted rounded-full p-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFromCart(item.id);
-                        }}
-                        className="w-8 h-8 rounded-full bg-background hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
+        <div ref={scrollRef} className="pb-32">
+          {/* Render sections */}
+          {categories.filter(cat => cat !== "todo").map((category) => {
+            const categoryItems = mockMenuItems.filter(item => item.category === category);
+            if (categoryItems.length === 0) return null;
+            
+            return (
+              <div key={category} className="mb-6">
+                <h3 className="px-4 text-lg font-bold mb-3 capitalize">{category}</h3>
+                <ScrollArea className="w-full">
+                  <div className="flex gap-3 px-4">
+                    {categoryItems.map(item => (
+                      <motion.div
+                        key={item.id}
+                        onClick={() => handleProductClick(item)}
+                        className={`flex-shrink-0 w-36 bg-card rounded-2xl overflow-hidden border-2 transition-all cursor-pointer hover:border-primary/50 ${
+                          highlightedDishId === item.id ? 'border-primary shadow-glow' : 'border-border'
+                        }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-8 text-center font-semibold">{cart[item.id]}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(item.id);
-                        }}
-                        className="w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(item.id);
-                      }}
-                      className="w-10 h-10 rounded-full bg-black hover:bg-primary transition-colors flex items-center justify-center"
-                    >
-                      <Plus className="w-5 h-5 text-primary hover:text-primary-foreground transition-colors" />
-                    </button>
-                  )}
-                </div>
+                        <div className="relative h-36 overflow-hidden">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                        
+                        <div className="p-3">
+                          <h4 className="font-semibold text-sm mb-1 truncate">{item.name}</h4>
+                          <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
+                            {item.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <p className="text-base font-bold text-primary">${item.price}</p>
+                            {cart[item.id] ? (
+                              <div className="flex items-center gap-1 bg-muted rounded-full px-1 py-0.5">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFromCart(item.id);
+                                  }}
+                                  className="w-6 h-6 rounded-full bg-background hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
+                                >
+                                  <Minus className="w-3 h-3" />
+                                </button>
+                                <span className="w-6 text-center text-xs font-semibold">{cart[item.id]}</span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    addToCart(item.id);
+                                  }}
+                                  className="w-6 h-6 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  addToCart(item.id);
+                                }}
+                                className="w-8 h-8 rounded-full bg-black hover:bg-primary transition-colors flex items-center justify-center"
+                              >
+                                <Plus className="w-4 h-4 text-primary hover:text-primary-foreground transition-colors" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
-            </motion.div>
-          ))}
+            );
+          })}
 
           {/* Recommendations Section */}
-          <div className="pt-6">
+          <div className="pt-6 px-4">
             <h3 className="text-xl font-bold text-foreground mb-4">
               Porque seleccionaste {restaurant.name}
             </h3>
@@ -385,7 +394,7 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
                   <motion.div
                     key={dish.id}
                     onClick={() => handleProductClick(dish)}
-                    className="flex-shrink-0 w-48 bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all cursor-pointer"
+                    className="flex-shrink-0 w-36 bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all cursor-pointer"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -396,7 +405,7 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, aut
                       <h4 className="font-semibold text-sm mb-1 truncate">{dish.name}</h4>
                       <p className="text-xs text-muted-foreground mb-2 truncate">{dish.restaurant}</p>
                       <div className="flex items-center justify-between">
-                        <span className="text-primary font-bold">${dish.price}</span>
+                        <span className="text-primary font-bold text-sm">${dish.price}</span>
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="w-3 h-3" />
                           <span>{dish.deliveryTime}min</span>
