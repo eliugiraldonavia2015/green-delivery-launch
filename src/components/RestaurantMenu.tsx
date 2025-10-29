@@ -29,6 +29,7 @@ interface RestaurantMenuProps {
   onBack: () => void;
   onCheckout: () => void;
   highlightedDishId?: number;
+  autoOpenDish?: boolean;
 }
 
 const mockMenuItems: MenuItem[] = [
@@ -97,7 +98,7 @@ const recommendedDishes: MenuItem[] = [
 
 const categories = ["todo", "popular", "combos", "entradas", "especiales", "sopas", "carnes", "bebidas"];
 
-const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: RestaurantMenuProps) => {
+const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId, autoOpenDish = false }: RestaurantMenuProps) => {
   const [cart, setCart] = useState<{ [key: number]: number }>(
     highlightedDishId ? { [highlightedDishId]: 1 } : {}
   );
@@ -109,15 +110,14 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: R
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (highlightedDishId) {
-      // Auto-open the product detail if there's a highlighted dish
+    if (autoOpenDish && highlightedDishId) {
       const highlightedItem = [...mockMenuItems, ...recommendedDishes].find(i => i.id === highlightedDishId);
       if (highlightedItem) {
         setSelectedProduct(highlightedItem);
         setShowProductDetail(true);
       }
     }
-  }, [highlightedDishId]);
+  }, [highlightedDishId, autoOpenDish]);
 
   useEffect(() => {
     const scrollElement = scrollRef.current;

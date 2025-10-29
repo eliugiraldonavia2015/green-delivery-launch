@@ -19,6 +19,7 @@ import Notifications from "@/components/Notifications";
 import CommentOverlay from "@/components/CommentOverlay";
 import ShareOverlay from "@/components/ShareOverlay";
 import MusicPlayerOverlay from "@/components/MusicPlayerOverlay";
+import Shop from "@/components/Shop";
 
 interface Video {
   id: number;
@@ -180,6 +181,8 @@ const Feed = () => {
   const [currentMusicInfo, setCurrentMusicInfo] = useState({ name: "", artist: "" });
   const [highlightedDish, setHighlightedDish] = useState<number | undefined>();
   const [selectedRestaurant, setSelectedRestaurant] = useState<{ name: string; avatar: string } | null>(null);
+  const [showShop, setShowShop] = useState(false);
+  const [showShopLoading, setShowShopLoading] = useState(false);
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const isScrolling = useRef(false);
@@ -435,12 +438,67 @@ const Feed = () => {
         isOpen={showShare} 
         onClose={() => setShowShare(false)}
       />
-      <MusicPlayerOverlay 
-        isOpen={showMusicPlayer} 
+      <MusicPlayerOverlay
+        isOpen={showMusicPlayer}
         onClose={() => setShowMusicPlayer(false)}
         musicName={currentMusicInfo.name}
         artist={currentMusicInfo.artist}
       />
+
+      {showShopLoading && (
+        <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+          <div className="text-center">
+            <motion.div
+              animate={{ rotate: [0, 360], scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-24 h-24 mx-auto mb-4"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="hsl(var(--primary))"/>
+                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="hsl(var(--accent))"/>
+              </svg>
+            </motion.div>
+            <p className="text-muted-foreground">Preparando tu experiencia...</p>
+          </div>
+        </div>
+      )}
+
+      {showShop && <Shop onClose={() => setShowShop(false)} />}
+
+      {showShopLoading && (
+        <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+          <div className="text-center">
+            <motion.div
+              animate={{ 
+                rotate: [0, 360],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="w-24 h-24 mx-auto mb-4"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="hsl(var(--primary))"/>
+                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="hsl(var(--accent))"/>
+                <motion.path 
+                  d="M12 8v4l3 3" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth="2" 
+                  strokeLinecap="round"
+                  animate={{ pathLength: [0, 1, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              </svg>
+            </motion.div>
+            <p className="text-muted-foreground">Preparando tu experiencia...</p>
+          </div>
+        </div>
+      )}
+
+      {showShop && <Shop onClose={() => setShowShop(false)} />}
     </div>
   );
 };
@@ -746,38 +804,44 @@ const FeedContent = ({
             <span className="text-white text-xs">Notif</span>
           </motion.button>
 
-          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-            <SheetTrigger asChild>
-              <motion.button
-                className="flex flex-col items-center gap-1 -mt-6 min-w-[60px]"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="relative group">
-                  {/* Glow effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-primary rounded-2xl blur-lg"
-                    animate={{
-                      opacity: [0.3, 0.6, 0.3]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  
-                  {/* Button */}
-                  <div className="relative w-14 h-14 rounded-2xl bg-black flex items-center justify-center group-hover:scale-110 transition-transform border-2 border-primary/50">
-                    <ShoppingCart className="w-7 h-7 text-primary" />
-                  </div>
-                </div>
-              </motion.button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-[85vh] bg-background rounded-t-3xl p-0">
-              <DeliveryInterface onNavigate={handleRedirect} />
-            </SheetContent>
-          </Sheet>
+          <motion.button
+            onClick={() => {
+              setShowShopLoading(true);
+              setTimeout(() => {
+                setShowShopLoading(false);
+                setShowShop(true);
+              }, 1500);
+            }}
+            className="flex flex-col items-center gap-1 -mt-6 min-w-[60px]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <div className="relative group">
+              <motion.div
+                className="absolute inset-0 rounded-2xl blur-lg"
+                style={{
+                  background: "linear-gradient(135deg, #FF0050, #00F2EA, #FF0050)",
+                }}
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <div className="relative w-14 h-14 rounded-2xl bg-black flex items-center justify-center group-hover:scale-110 transition-transform border-2 border-white/20">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
+                  <defs>
+                    <linearGradient id="discoverGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FF0050" />
+                      <stop offset="50%" stopColor="#00F2EA" />
+                      <stop offset="100%" stopColor="#FF0050" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#discoverGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  <path d="M2 17L12 22L22 17" stroke="url(#discoverGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 12L12 17L22 12" stroke="url(#discoverGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <span className="text-white text-xs">Descubrir</span>
+          </motion.button>
 
           <motion.button
             onClick={() => setShowMessages(true)}

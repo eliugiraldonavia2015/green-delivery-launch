@@ -58,7 +58,7 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
   if (!product) return null;
 
   const total = product.price * quantity;
-  const showStickyHeader = scrollY > 250;
+  const showStickyHeader = scrollY > 400;
 
   const toggleSide = (id: number) => {
     setSelectedSides(prev => {
@@ -170,15 +170,17 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                 </button>
               </div>
 
-              <div className="px-6 pb-32">
+              <div className="pb-32">
                 {/* Product Info */}
-                <div className="mb-6 -mt-8 relative z-10">
+                <div className="mb-6 -mt-8 relative z-10 px-4">
                   <div className="bg-card rounded-3xl p-6 shadow-lg">
                     <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
                     <p className="text-muted-foreground text-lg mb-4">{product.description}</p>
                     <p className="text-3xl font-bold text-primary">${product.price}</p>
                   </div>
                 </div>
+
+                <div className="px-6">{/* Wrapper for rest of content */}
 
                 {/* Side Recommendations */}
                 <div className="mb-6">
@@ -238,6 +240,7 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                     className="min-h-[100px] bg-card border-border rounded-2xl"
                   />
                 </div>
+                </div>{/* End wrapper */}
               </div>
             </div>
 
