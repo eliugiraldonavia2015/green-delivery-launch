@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { ArrowLeft, ShoppingCart, Plus, Minus, X, Clock, DollarSign, Star, Share2, Bookmark } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ArrowLeft, ShoppingCart, Plus, Minus, X, Clock, DollarSign, Star, Share2, Bookmark, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -105,7 +105,31 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: R
   const [selectedCategory, setSelectedCategory] = useState("todo");
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
   const [showProductDetail, setShowProductDetail] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (highlightedDishId) {
+      // Auto-open the product detail if there's a highlighted dish
+      const highlightedItem = [...mockMenuItems, ...recommendedDishes].find(i => i.id === highlightedDishId);
+      if (highlightedItem) {
+        setSelectedProduct(highlightedItem);
+        setShowProductDetail(true);
+      }
+    }
+  }, [highlightedDishId]);
+
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
+
+    const handleScroll = () => {
+      setScrollY(scrollElement.scrollTop);
+    };
+
+    scrollElement.addEventListener('scroll', handleScroll);
+    return () => scrollElement.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const addToCart = (itemId: number, quantity: number = 1, notes?: string) => {
     setCart(prev => ({ ...prev, [itemId]: (prev[itemId] || 0) + quantity }));
@@ -139,8 +163,66 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: R
     setShowProductDetail(true);
   };
 
+  const showCompactHeader = scrollY > 200;
+
   return (
     <div className="fixed inset-0 z-30 bg-background overflow-hidden flex flex-col">
+      {/* Compact Header (appears on scroll) */}
+      <AnimatePresence>
+        {showCompactHeader && (
+          <motion.div
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            exit={{ y: -100 }}
+            className="absolute top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
+          >
+            <div className="flex items-center px-4 py-3 gap-3">
+              <button
+                onClick={onBack}
+                className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              
+              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <img src={restaurant.profileImage} alt={restaurant.name} className="w-full h-full object-cover" />
+              </div>
+              
+              <h3 className="font-bold text-lg flex-1 truncate">{restaurant.name}</h3>
+              
+              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
+                <Share2 className="w-5 h-5" />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
+                <Search className="w-5 h-5" />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-card flex items-center justify-center">
+                <Bookmark className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Category Menu in Compact Header */}
+            <ScrollArea className="w-full border-t border-border">
+              <div className="flex gap-2 px-4 py-2">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+                      selectedCategory === cat
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section with Cover */}
       <div className="relative h-64 flex-shrink-0">
         <div 
@@ -226,8 +308,8 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: R
       </div>
 
       {/* Menu Items */}
-      <ScrollArea className="flex-1" ref={scrollRef}>
-        <div className="px-4 space-y-3 pb-32">
+      <ScrollArea className="flex-1">
+        <div ref={scrollRef} className="px-4 space-y-3 pb-32">
           {filteredItems.map(item => (
             <motion.div
               key={item.id}
@@ -333,7 +415,7 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: R
           <Button
             onClick={onCheckout}
             size="lg"
-            className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity text-lg font-bold"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 transition-colors text-lg font-bold"
           >
             Ir al Checkout • ${cartTotal.toFixed(2)}
           </Button>
@@ -393,7 +475,7 @@ const RestaurantMenu = ({ restaurant, onBack, onCheckout, highlightedDishId }: R
               <Button
                 onClick={onCheckout}
                 size="lg"
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-accent"
+                className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 transition-colors"
               >
                 Confirmar Pedido
               </Button>

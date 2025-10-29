@@ -93,7 +93,7 @@ const CommentOverlay = ({ isOpen, onClose, commentCount }: CommentOverlayProps) 
 
             {/* Comments List */}
             <ScrollArea className="flex-1 px-6 py-4">
-              <div className="space-y-6">
+              <div className="space-y-3">
                 {mockComments.map((comment) => (
                   <motion.div
                     key={comment.id}
@@ -108,18 +108,18 @@ const CommentOverlay = ({ isOpen, onClose, commentCount }: CommentOverlayProps) 
                     />
                     <div className="flex-1">
                       <div className="bg-card rounded-2xl rounded-tl-none px-4 py-3">
-                        <p className="font-semibold text-sm mb-1">{comment.user}</p>
-                        <p className="text-foreground">{comment.text}</p>
+                        <p className="font-semibold text-xs mb-0.5">{comment.user}</p>
+                        <p className="text-foreground text-sm">{comment.text}</p>
                       </div>
-                      <div className="flex items-center gap-4 mt-2 px-4">
-                        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <div className="flex items-center gap-3 mt-1 px-4">
+                        <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                           {comment.time}
                         </button>
-                        <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-accent transition-colors">
-                          <Heart className="w-4 h-4" />
+                        <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-accent transition-colors">
+                          <Heart className="w-3 h-3" />
                           <span>{comment.likes}</span>
                         </button>
-                        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                           Responder
                         </button>
                       </div>

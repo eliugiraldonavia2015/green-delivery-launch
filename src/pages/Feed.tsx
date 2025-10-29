@@ -724,8 +724,8 @@ const FeedContent = ({
       </div>
 
       {/* Bottom Navigation */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/90 backdrop-blur-lg border-t border-white/10">
-        <div className="flex justify-around items-center px-4 py-3 pb-safe">
+      <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/90 backdrop-blur-lg border-t border-white/10 pb-safe">
+        <div className="flex justify-around items-center px-4 py-3">
           <motion.button
             onClick={handleRedirect}
             className="flex flex-col items-center gap-1 min-w-[60px]"

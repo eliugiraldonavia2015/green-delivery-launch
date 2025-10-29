@@ -104,7 +104,7 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                   initial={{ y: -100 }}
                   animate={{ y: 0 }}
                   exit={{ y: -100 }}
-                  className="absolute top-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between"
+                  className="absolute top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between"
                 >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold truncate">{product.name}</h4>
@@ -138,18 +138,28 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
             <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto">
               {/* Parallax Header */}
               <div 
-                className="relative h-80 overflow-hidden"
+                className="relative overflow-hidden transition-all duration-300"
                 style={{ 
-                  transform: `translateY(${scrollY * 0.5}px)`,
-                  transition: 'transform 0.1s ease-out'
+                  height: Math.max(200, 320 - scrollY * 0.3) + 'px',
+                  transform: `translateY(${scrollY * 0.5}px)`
                 }}
               >
                 <img 
                   src={product.image} 
                   alt={product.name} 
                   className="w-full h-full object-cover"
+                  style={{
+                    filter: scrollY > 100 ? 'brightness(0.9)' : 'brightness(1)'
+                  }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                <div 
+                  className="absolute inset-0 transition-all duration-300"
+                  style={{
+                    background: scrollY > 100 
+                      ? 'linear-gradient(to top, hsl(var(--background)), transparent 40%)' 
+                      : 'linear-gradient(to top, hsl(var(--background)), transparent 60%)'
+                  }}
+                />
                 
                 {/* Top buttons */}
                 <button
@@ -257,7 +267,7 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                     onAddToCart(product.id, quantity, notes);
                     onClose();
                   }}
-                  className="flex-1 h-14 rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity text-lg font-bold"
+                  className="flex-1 h-14 rounded-full bg-primary hover:bg-primary/90 transition-colors text-lg font-bold"
                 >
                   Agregar ${total.toFixed(2)}
                 </Button>

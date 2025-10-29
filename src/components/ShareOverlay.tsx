@@ -1,28 +1,62 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check } from "lucide-react";
+import { X, Copy, Check, Share2, Link as LinkIcon, MessageCircle, Mail, MoreHorizontal, AlertTriangle, EyeOff, Download, TrendingUp, Gauge, BookOpen, Utensils } from "lucide-react";
 import { useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ShareOverlayProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const users = [
+  { id: 1, name: "María", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria" },
+  { id: 2, name: "Juan", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=juan" },
+  { id: 3, name: "Laura", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=laura" },
+  { id: 4, name: "Pedro", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=pedro" },
+  { id: 5, name: "Ana", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ana" },
+  { id: 6, name: "Carlos", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=carlos" }
+];
+
 const shareOptions = [
-  { id: "whatsapp", name: "WhatsApp", color: "bg-[#25D366]", icon: "💬" },
-  { id: "facebook", name: "Facebook", color: "bg-[#1877F2]", icon: "📘" },
-  { id: "twitter", name: "Twitter", color: "bg-[#1DA1F2]", icon: "🐦" },
-  { id: "instagram", name: "Instagram", color: "bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737]", icon: "📸" },
-  { id: "telegram", name: "Telegram", color: "bg-[#0088cc]", icon: "✈️" },
-  { id: "messenger", name: "Messenger", color: "bg-gradient-to-r from-[#00B2FF] to-[#006AFF]", icon: "💌" }
+  { id: "compartir", name: "Compartir", icon: Share2, color: "text-primary" },
+  { id: "copiar", name: "Copiar enlace", icon: Copy, color: "text-accent" },
+  { id: "whatsapp", name: "WhatsApp", icon: MessageCircle, color: "text-green-500" },
+  { id: "sms", name: "SMS", icon: MessageCircle, color: "text-blue-500" },
+  { id: "messenger", name: "Messenger", icon: MessageCircle, color: "text-blue-600" },
+  { id: "instagram", name: "Instagram", icon: MessageCircle, color: "text-pink-500" },
+  { id: "telegram", name: "Telegram", icon: MessageCircle, color: "text-sky-500" },
+  { id: "facebook", name: "Facebook", icon: MessageCircle, color: "text-blue-700" },
+  { id: "correo", name: "Correo", icon: Mail, color: "text-gray-500" },
+  { id: "x", name: "X", icon: MessageCircle, color: "text-gray-900" },
+  { id: "mas", name: "Más", icon: MoreHorizontal, color: "text-gray-600" }
+];
+
+const moreOptions = [
+  { id: "denunciar", name: "Denunciar", icon: AlertTriangle, color: "text-muted-foreground" },
+  { id: "no-interesa", name: "No me interesa", icon: EyeOff, color: "text-muted-foreground" },
+  { id: "descargar", name: "Descargar", icon: Download, color: "text-muted-foreground" },
+  { id: "promocionar", name: "Promocionar", icon: TrendingUp, color: "text-muted-foreground" },
+  { id: "velocidad", name: "Velocidad", icon: Gauge, color: "text-muted-foreground" },
+  { id: "receta", name: "Receta", icon: BookOpen, color: "text-muted-foreground" },
+  { id: "ingredientes", name: "Ingredientes", icon: Utensils, color: "text-muted-foreground" }
 ];
 
 const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
   const [copied, setCopied] = useState(false);
+  const [sharedTo, setSharedTo] = useState<number[]>([]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShareToUser = (userId: number) => {
+    setSharedTo(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
   };
 
   return (
@@ -44,7 +78,7 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl max-h-[85vh] flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -57,51 +91,95 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
               </button>
             </div>
 
-            {/* Share Options */}
-            <div className="p-6">
-              <div className="grid grid-cols-4 gap-4 mb-6">
-                {shareOptions.map((option, index) => (
-                  <motion.button
-                    key={option.id}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => {
-                      // Handle share to platform
-                      onClose();
-                    }}
-                    className="flex flex-col items-center gap-2"
-                  >
-                    <div className={`w-16 h-16 rounded-2xl ${option.color} flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition-transform`}>
-                      {option.icon}
-                    </div>
-                    <span className="text-xs text-muted-foreground text-center">{option.name}</span>
-                  </motion.button>
-                ))}
-              </div>
-
-              {/* Copy Link */}
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                onClick={handleCopyLink}
-                className="w-full flex items-center justify-between bg-card hover:bg-muted transition-colors rounded-2xl p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    {copied ? (
-                      <Check className="w-6 h-6 text-primary" />
-                    ) : (
-                      <Copy className="w-6 h-6 text-primary" />
-                    )}
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="p-6 space-y-6">
+                  {/* Section 1: Enviar a */}
+                  <div>
+                    <h4 className="font-semibold mb-3">Enviar a</h4>
+                    <ScrollArea className="w-full">
+                      <div className="flex gap-4 pb-2">
+                        {users.map((user) => (
+                          <motion.button
+                            key={user.id}
+                            onClick={() => handleShareToUser(user.id)}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex flex-col items-center gap-2 min-w-[70px]"
+                          >
+                            <div className="relative">
+                              <img
+                                src={user.avatar}
+                                alt={user.name}
+                                className="w-16 h-16 rounded-full border-2 border-border"
+                              />
+                              {sharedTo.includes(user.id) && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="absolute inset-0 bg-primary/80 rounded-full flex items-center justify-center"
+                                >
+                                  <Check className="w-8 h-8 text-white" />
+                                </motion.div>
+                              )}
+                            </div>
+                            <span className="text-xs text-center truncate w-full">{user.name}</span>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </div>
-                  <div className="text-left">
-                    <p className="font-semibold">{copied ? "¡Enlace copiado!" : "Copiar enlace"}</p>
-                    <p className="text-sm text-muted-foreground">Comparte con quien quieras</p>
+
+                  {/* Section 2: Share Options */}
+                  <div>
+                    <h4 className="font-semibold mb-3">Compartir en</h4>
+                    <ScrollArea className="w-full">
+                      <div className="flex gap-3 pb-2">
+                        {shareOptions.map((option) => {
+                          const Icon = option.icon;
+                          const isCopiado = option.id === "copiar" && copied;
+                          return (
+                            <motion.button
+                              key={option.id}
+                              onClick={option.id === "copiar" ? handleCopyLink : () => {}}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex flex-col items-center gap-2 min-w-[70px]"
+                            >
+                              <div className={`w-14 h-14 rounded-2xl ${isCopiado ? 'bg-primary' : 'bg-card'} flex items-center justify-center border-2 ${isCopiado ? 'border-primary' : 'border-border'} hover:border-primary/50 transition-colors`}>
+                                <Icon className={`w-6 h-6 ${isCopiado ? 'text-white' : option.color}`} />
+                              </div>
+                              <span className="text-xs text-center truncate w-full">{isCopiado ? "Copiado" : option.name}</span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  </div>
+
+                  {/* Section 3: More Options */}
+                  <div>
+                    <h4 className="font-semibold mb-3">Más opciones</h4>
+                    <ScrollArea className="w-full">
+                      <div className="flex gap-3 pb-2">
+                        {moreOptions.map((option) => {
+                          const Icon = option.icon;
+                          return (
+                            <motion.button
+                              key={option.id}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex flex-col items-center gap-2 min-w-[70px]"
+                            >
+                              <div className="w-14 h-14 rounded-2xl bg-card flex items-center justify-center border-2 border-border hover:border-primary/50 transition-colors">
+                                <Icon className={`w-6 h-6 ${option.color}`} />
+                              </div>
+                              <span className="text-xs text-center truncate w-full text-muted-foreground">{option.name}</span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
                   </div>
                 </div>
-              </motion.button>
+              </ScrollArea>
             </div>
           </motion.div>
         </>
