@@ -199,7 +199,11 @@ const Feed = () => {
   const isScrolling = useRef(false);
   const scrollTimeout = useRef<NodeJS.Timeout>();
 
-  const handleRedirect = () => {
+  const handleCompleteCheckout = () => {
+    setShowCheckout(false);
+  };
+
+  const handleHomeClick = () => {
     navigate("/home");
   };
 
@@ -313,7 +317,7 @@ const Feed = () => {
   }
 
   if (showCheckout) {
-    return <CheckoutTimeline orderId="12345" onComplete={handleRedirect} demoMode={true} />;
+    return <CheckoutTimeline orderId="12345" onComplete={handleCompleteCheckout} demoMode={true} />;
   }
 
   if (showUserProfile) {
@@ -389,7 +393,7 @@ const Feed = () => {
             handleLike={handleLike}
             handleSave={handleSave}
             handleFollowFromFeed={handleFollowFromFeed}
-            handleRedirect={handleRedirect}
+            handleHomeClick={handleHomeClick}
             setIsCartOpen={setIsCartOpen}
             isCartOpen={isCartOpen}
             setShowProfile={setShowProfile}
@@ -422,9 +426,9 @@ const Feed = () => {
           following={following}
           handleLike={handleLike}
           handleSave={handleSave}
-          handleFollowFromFeed={handleFollowFromFeed}
-          handleRedirect={handleRedirect}
-          setIsCartOpen={setIsCartOpen}
+            handleFollowFromFeed={handleFollowFromFeed}
+            handleHomeClick={handleHomeClick}
+            setIsCartOpen={setIsCartOpen}
           isCartOpen={isCartOpen}
           setShowProfile={setShowProfile}
           setShowMenu={setShowMenu}
@@ -513,7 +517,7 @@ interface FeedContentProps {
   handleLike: (videoId: number, e: React.MouseEvent) => void;
   handleSave: (videoId: number, e: React.MouseEvent) => void;
   handleFollowFromFeed: (videoId: number, e: React.MouseEvent) => void;
-  handleRedirect: () => void;
+  handleHomeClick: () => void;
   setIsCartOpen: (open: boolean) => void;
   isCartOpen: boolean;
   setShowProfile: (show: boolean) => void;
@@ -543,7 +547,7 @@ const FeedContent = ({
   handleLike,
   handleSave,
   handleFollowFromFeed,
-  handleRedirect,
+  handleHomeClick,
   setIsCartOpen,
   isCartOpen,
   setShowProfile,
@@ -796,7 +800,7 @@ const FeedContent = ({
       <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/90 backdrop-blur-lg border-t border-white/10 pb-safe">
         <div className="flex justify-around items-center px-4 py-3">
           <motion.button
-            onClick={handleRedirect}
+            onClick={handleHomeClick}
             className="flex flex-col items-center gap-1 min-w-[60px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
