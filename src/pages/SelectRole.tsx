@@ -61,7 +61,7 @@ const SelectRole = () => {
         }
       } else {
         toast.success(`¡Bienvenido como ${selectedRole}!`);
-        navigate("/");
+        navigate("/feed");
       }
     } catch (error) {
       toast.error("Error inesperado al asignar rol");

@@ -24,7 +24,7 @@ const Navbar = () => {
       toast.error("Error al cerrar sesión");
     } else {
       toast.success("Sesión cerrada");
-      navigate("/");
+      navigate("/homepage");
     }
   };
 
