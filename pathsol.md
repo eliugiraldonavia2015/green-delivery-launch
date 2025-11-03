@@ -61,6 +61,75 @@ export default defineConfig(({ mode }) => ({
 - Vercel ahora usa `dest` en lugar de `destination`
 - Usar la sintaxis antigua (`source`/`destination`) causará error de validación: `routes[1] should NOT have additional property 'source'`
 
+### 🚨 PROBLEMA CRÍTICO: Configuración de Build Base
+
+**DIAGNÓSTICO CONFIRMADO:**
+
+El parámetro `--base` en el comando de build puede causar rutas incorrectas en producción:
+
+```json
+// ❌ INCORRECTO en package.json (causa pantalla en blanco en Vercel)
+"build": "vite build --base=//"
+
+// ✅ CORRECTO
+"build": "vite build --base=/"
+// O simplemente: "build": "vite build" (usa la config de vite.config.ts)
+```
+
+**¿Por qué `--base=//` causa fallos en Vercel?**
+
+1. **Generación de Rutas Incorrectas:**
+   ```html
+   <!-- Con --base=// se genera: -->
+   <script type="module" src="//assets/main-xxxx.js"></script>
+   
+   <!-- Debería ser: -->
+   <script type="module" src="/assets/main-xxxx.js"></script>
+   ```
+
+2. **Comportamiento Diferencial:**
+   - **Local (npm run dev):** Vite corrige automáticamente `//` → `/`, funciona correctamente
+   - **Producción (Vercel):** Los navegadores interpretan `//assets/` como protocolo relativo (ej: `https://assets/`), causando 404 en todos los recursos
+
+3. **Resultado Observable:**
+   - Pantalla en blanco en producción
+   - DevTools muestra 404 en todos los archivos JS/CSS
+   - Vercel puede mostrar contenido predeterminado (calendario o caché antiguo)
+
+**CONFIGURACIÓN ACTUAL CORRECTA:**
+
+Tu archivo `vite.config.ts` ya tiene la configuración correcta:
+
+```typescript
+export default defineConfig(({ mode }) => ({
+  base: '/',  // ✅ CORRECTO
+  // ...
+}));
+```
+
+**⚠️ NOTA IMPORTANTE SOBRE package.json:**
+- package.json es un archivo gestionado automáticamente en Lovable
+- Si el comando de build contiene `--base=//`, esto sobrescribe vite.config.ts
+- La configuración correcta en vite.config.ts debe prevalecer si no hay flags CLI que la sobrescriban
+
+**VERIFICACIÓN POST-BUILD:**
+
+Después de cada build, verifica `dist/index.html`:
+
+```bash
+# Revisa que las rutas usen una sola barra
+grep -r "//assets" dist/
+
+# Si encuentra resultados, hay un problema con --base
+# Si no encuentra nada, las rutas están correctas
+```
+
+**Rutas correctas esperadas en dist/index.html:**
+```html
+<script type="module" crossorigin src="/assets/index-[hash].js"></script>
+<link rel="stylesheet" crossorigin href="/assets/index-[hash].css">
+```
+
 ### ⚠️ IMPORTANTE: Por qué se usa `routes` en lugar de `rewrites`
 
 Esta configuración es **CRÍTICA** y específica para SPAs (Single Page Applications) con React Router en Vercel.
