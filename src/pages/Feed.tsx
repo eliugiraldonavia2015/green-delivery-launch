@@ -204,7 +204,7 @@ const Feed = () => {
   };
 
   const handleHomeClick = () => {
-    navigate("/");
+    navigate("/homepage");
   };
 
   const handleLike = (videoId: number, e: React.MouseEvent) => {
