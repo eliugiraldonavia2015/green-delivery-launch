@@ -246,22 +246,22 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
             </div>
 
             {/* Fixed Bottom Bar */}
-            <div className="absolute bottom-0 left-0 right-0 bg-background border-t border-border p-6">
+            <div className="absolute bottom-0 left-0 right-0 bg-background/95 backdrop-blur-lg border-t-2 border-primary/20 p-6 shadow-2xl z-10">
               <div className="flex items-center gap-4">
                 {/* Quantity Selector */}
-                <div className="flex items-center gap-3 bg-card rounded-full p-2">
+                <div className="flex items-center gap-3 bg-card rounded-full p-2 border-2 border-border">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 rounded-full bg-muted hover:bg-border transition-colors flex items-center justify-center"
+                    className="w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
                   >
                     <Minus className="w-5 h-5" />
                   </button>
                   <span className="w-8 text-center font-bold text-lg">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 transition-colors flex items-center justify-center"
+                    className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors flex items-center justify-center"
                   >
-                    <Plus className="w-5 h-5 text-primary-foreground" />
+                    <Plus className="w-5 h-5" />
                   </button>
                 </div>
 
@@ -271,9 +271,9 @@ const ProductDetailOverlay = ({ isOpen, onClose, product, onAddToCart }: Product
                     onAddToCart(product.id, quantity, notes);
                     onClose();
                   }}
-                  className="flex-1 h-14 rounded-full bg-primary hover:bg-primary/90 transition-colors text-lg font-bold"
+                  className="flex-1 h-14 rounded-full bg-primary hover:bg-primary/90 transition-all text-lg font-bold shadow-glow"
                 >
-                  Agregar ${total.toFixed(2)}
+                  Añadir al Carrito ${total.toFixed(2)}
                 </Button>
               </div>
             </div>

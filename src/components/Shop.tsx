@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MapPin, Search, Mic, SlidersHorizontal, Star, Home, Bell, MessageSquare, User, ChevronRight } from "lucide-react";
+import { X, MapPin, Search, Mic, SlidersHorizontal, Star, Home, Bell, MessageSquare, User, ChevronRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
 
 interface ShopProps {
   onClose: () => void;
@@ -46,6 +47,16 @@ const Shop = ({ onClose }: ShopProps) => {
   const [selectedCategory, setSelectedCategory] = useState("Burgers");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [expandedFilter, setExpandedFilter] = useState<string | null>(null);
+  const [priceRange, setPriceRange] = useState([0, 50]);
+  const [deliveryTime, setDeliveryTime] = useState([0, 60]);
+  const [minRating, setMinRating] = useState(0);
+  const [selectedFoodTypes, setSelectedFoodTypes] = useState<string[]>([]);
+  const [maxDistance, setMaxDistance] = useState(10);
+
+  const toggleFilter = (filterName: string) => {
+    setExpandedFilter(expandedFilter === filterName ? null : filterName);
+  };
 
   return (
     <motion.div
@@ -153,16 +164,16 @@ const Shop = ({ onClose }: ShopProps) => {
         </div>
       </div>
 
-      {/* Popular Section - 2 rows, 10 columns */}
+      {/* Popular Section - Horizontally scrollable */}
       <div className="px-6 mb-6">
         <h2 className="text-xl font-bold mb-4">Popular cerca de ti</h2>
         <div className="overflow-x-auto no-scrollbar">
-          <div className="grid grid-rows-2 grid-flow-col gap-3 pb-2" style={{ gridTemplateColumns: 'repeat(10, 160px)' }}>
+          <div className="flex gap-3 pb-2">
             {popularItems.map((item) => (
             <motion.div
               key={item.id}
               whileTap={{ scale: 0.95 }}
-              className="bg-card rounded-2xl overflow-hidden border border-border"
+              className="flex-shrink-0 w-40 bg-card rounded-2xl overflow-hidden border border-border"
             >
               <div className="relative h-32">
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -334,91 +345,240 @@ const Shop = ({ onClose }: ShopProps) => {
       <Sheet open={showFilters} onOpenChange={setShowFilters}>
         <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
           <div className="py-6 h-full overflow-y-auto">
-            <h3 className="text-xl font-bold mb-6">Filtros</h3>
+            <h3 className="text-xl font-bold mb-6">Filtros de Búsqueda</h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Precio */}
               <div className="border border-border rounded-xl overflow-hidden">
                 <button 
                   className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
+                  onClick={() => toggleFilter('precio')}
                 >
                   <span>Precio</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <motion.div
+                    animate={{ rotate: expandedFilter === 'precio' ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </motion.div>
                 </button>
+                <AnimatePresence>
+                  {expandedFilter === 'precio' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 py-4 bg-muted/50">
+                        <div className="flex justify-between mb-2 text-sm">
+                          <span>${priceRange[0]}</span>
+                          <span>${priceRange[1]}</span>
+                        </div>
+                        <Slider
+                          value={priceRange}
+                          onValueChange={setPriceRange}
+                          max={100}
+                          step={5}
+                          className="w-full"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Tiempo de entrega */}
               <div className="border border-border rounded-xl overflow-hidden">
                 <button 
                   className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
+                  onClick={() => toggleFilter('tiempo')}
                 >
                   <span>Tiempo de entrega</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <motion.div
+                    animate={{ rotate: expandedFilter === 'tiempo' ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </motion.div>
                 </button>
+                <AnimatePresence>
+                  {expandedFilter === 'tiempo' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 py-4 bg-muted/50">
+                        <div className="flex justify-between mb-2 text-sm">
+                          <span>{deliveryTime[0]} min</span>
+                          <span>{deliveryTime[1]} min</span>
+                        </div>
+                        <Slider
+                          value={deliveryTime}
+                          onValueChange={setDeliveryTime}
+                          max={120}
+                          step={5}
+                          className="w-full"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Calificación */}
               <div className="border border-border rounded-xl overflow-hidden">
                 <button 
                   className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
+                  onClick={() => toggleFilter('rating')}
                 >
                   <span>Calificación</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <motion.div
+                    animate={{ rotate: expandedFilter === 'rating' ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </motion.div>
                 </button>
+                <AnimatePresence>
+                  {expandedFilter === 'rating' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 py-4 bg-muted/50 space-y-2">
+                        {[4.5, 4.0, 3.5, 3.0].map((rating) => (
+                          <button
+                            key={rating}
+                            onClick={() => setMinRating(rating)}
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+                              minRating === rating ? 'bg-primary text-primary-foreground' : 'bg-card hover:bg-muted'
+                            }`}
+                          >
+                            <Star className="w-4 h-4 fill-accent text-accent" />
+                            <span>{rating}+ estrellas</span>
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Tipo de comida */}
               <div className="border border-border rounded-xl overflow-hidden">
                 <button 
                   className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
+                  onClick={() => toggleFilter('tipo')}
                 >
                   <span>Tipo de comida</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <motion.div
+                    animate={{ rotate: expandedFilter === 'tipo' ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </motion.div>
                 </button>
+                <AnimatePresence>
+                  {expandedFilter === 'tipo' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 py-4 bg-muted/50 space-y-2">
+                        {['Vegetariana', 'Vegana', 'Sin Gluten', 'Keto', 'Halal'].map((type) => (
+                          <button
+                            key={type}
+                            onClick={() => {
+                              setSelectedFoodTypes(prev => 
+                                prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+                              );
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                              selectedFoodTypes.includes(type) ? 'bg-primary text-primary-foreground' : 'bg-card hover:bg-muted'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Distancia */}
               <div className="border border-border rounded-xl overflow-hidden">
                 <button 
                   className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
+                  onClick={() => toggleFilter('distancia')}
                 >
                   <span>Distancia</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <motion.div
+                    animate={{ rotate: expandedFilter === 'distancia' ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </motion.div>
                 </button>
+                <AnimatePresence>
+                  {expandedFilter === 'distancia' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 py-4 bg-muted/50">
+                        <div className="flex justify-between mb-2 text-sm">
+                          <span>0 km</span>
+                          <span>{maxDistance} km</span>
+                        </div>
+                        <Slider
+                          value={[maxDistance]}
+                          onValueChange={(val) => setMaxDistance(val[0])}
+                          max={20}
+                          step={1}
+                          className="w-full"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
+            </div>
 
-              {/* Ofertas */}
-              <div className="border border-border rounded-xl overflow-hidden">
-                <button 
-                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
-                >
-                  <span>Ofertas y descuentos</span>
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Método de pago */}
-              <div className="border border-border rounded-xl overflow-hidden">
-                <button 
-                  className="w-full text-left px-4 py-3 bg-card hover:bg-muted transition-colors font-semibold flex items-center justify-between"
-                  onClick={() => {}}
-                >
-                  <span>Método de pago</span>
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-
-              <Button 
+            {/* Apply Button */}
+            <div className="mt-6 space-y-3">
+              <Button
                 onClick={() => setShowFilters(false)}
-                className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 mt-6"
+                className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90"
               >
-                Confirmar Filtros
+                Aplicar Filtros
+              </Button>
+              <Button
+                onClick={() => {
+                  setPriceRange([0, 50]);
+                  setDeliveryTime([0, 60]);
+                  setMinRating(0);
+                  setSelectedFoodTypes([]);
+                  setMaxDistance(10);
+                }}
+                variant="outline"
+                className="w-full h-12 rounded-xl"
+              >
+                Limpiar Filtros
               </Button>
             </div>
           </div>
