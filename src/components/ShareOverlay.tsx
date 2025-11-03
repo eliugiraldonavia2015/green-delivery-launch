@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check, Share2, Link as LinkIcon, MessageCircle, Mail, MoreHorizontal, AlertTriangle, EyeOff, Download, TrendingUp, Gauge, BookOpen, Utensils } from "lucide-react";
+import { X, Copy, Check, Share2, MessageCircle, Mail, MoreHorizontal, AlertTriangle, EyeOff, Download, TrendingUp, Gauge, BookOpen, Utensils } from "lucide-react";
 import { useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ShareOverlayProps {
   isOpen: boolean;
@@ -92,19 +91,19 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
             </div>
 
             <div className="flex-1 overflow-hidden">
-              <ScrollArea className="h-full">
+              <div className="h-full overflow-y-auto">
                 <div className="p-6 space-y-6">
                   {/* Section 1: Enviar a */}
                   <div>
                     <h4 className="font-semibold mb-3">Enviar a</h4>
-                    <ScrollArea className="w-full">
+                    <div className="overflow-x-auto no-scrollbar">
                       <div className="flex gap-4 pb-2">
                         {users.map((user) => (
                           <motion.button
                             key={user.id}
                             onClick={() => handleShareToUser(user.id)}
                             whileTap={{ scale: 0.95 }}
-                            className="flex flex-col items-center gap-2 min-w-[70px]"
+                            className="flex flex-col items-center gap-2 min-w-[70px] flex-shrink-0"
                           >
                             <div className="relative">
                               <img
@@ -126,13 +125,13 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
                           </motion.button>
                         ))}
                       </div>
-                    </ScrollArea>
+                    </div>
                   </div>
 
                   {/* Section 2: Share Options */}
                   <div>
                     <h4 className="font-semibold mb-3">Compartir en</h4>
-                    <ScrollArea className="w-full">
+                    <div className="overflow-x-auto no-scrollbar">
                       <div className="flex gap-3 pb-2">
                         {shareOptions.map((option) => {
                           const Icon = option.icon;
@@ -142,7 +141,7 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
                               key={option.id}
                               onClick={option.id === "copiar" ? handleCopyLink : () => {}}
                               whileTap={{ scale: 0.95 }}
-                              className="flex flex-col items-center gap-2 min-w-[70px]"
+                              className="flex flex-col items-center gap-2 min-w-[70px] flex-shrink-0"
                             >
                               <div className={`w-14 h-14 rounded-2xl ${isCopiado ? 'bg-primary' : 'bg-card'} flex items-center justify-center border-2 ${isCopiado ? 'border-primary' : 'border-border'} hover:border-primary/50 transition-colors`}>
                                 <Icon className={`w-6 h-6 ${isCopiado ? 'text-white' : option.color}`} />
@@ -152,13 +151,13 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
                           );
                         })}
                       </div>
-                    </ScrollArea>
+                    </div>
                   </div>
 
                   {/* Section 3: More Options */}
                   <div>
                     <h4 className="font-semibold mb-3">Más opciones</h4>
-                    <ScrollArea className="w-full">
+                    <div className="overflow-x-auto no-scrollbar">
                       <div className="flex gap-3 pb-2">
                         {moreOptions.map((option) => {
                           const Icon = option.icon;
@@ -166,7 +165,7 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
                             <motion.button
                               key={option.id}
                               whileTap={{ scale: 0.95 }}
-                              className="flex flex-col items-center gap-2 min-w-[70px]"
+                              className="flex flex-col items-center gap-2 min-w-[70px] flex-shrink-0"
                             >
                               <div className="w-14 h-14 rounded-2xl bg-card flex items-center justify-center border-2 border-border hover:border-primary/50 transition-colors">
                                 <Icon className={`w-6 h-6 ${option.color}`} />
@@ -176,10 +175,10 @@ const ShareOverlay = ({ isOpen, onClose }: ShareOverlayProps) => {
                           );
                         })}
                       </div>
-                    </ScrollArea>
+                    </div>
                   </div>
                 </div>
-              </ScrollArea>
+              </div>
             </div>
           </motion.div>
         </>

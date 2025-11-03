@@ -188,9 +188,11 @@ const Feed = () => {
   const handleCartClick = () => {
     setShowShopLoading(true);
     setTimeout(() => {
-      setShowShopLoading(false);
       setShowShop(true);
-    }, 800);
+      setTimeout(() => {
+        setShowShopLoading(false);
+      }, 100);
+    }, 1200);
   };
   const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -456,38 +458,42 @@ const Feed = () => {
         artist={currentMusicInfo.artist}
       />
 
-      {showShopLoading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] bg-background flex items-center justify-center"
-        >
-          <div className="flex flex-col items-center gap-4">
-            <motion.img
-              src={chefLoading}
-              alt="Loading"
-              className="w-32 h-32 rounded-full"
-              animate={{
-                scale: [1, 1.1, 1],
-                rotate: [0, 5, -5, 0]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-            <motion.p
-              className="text-lg font-semibold text-foreground"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              Preparando tu experiencia...
-            </motion.p>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {showShopLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[60] bg-background flex items-center justify-center"
+          >
+            <div className="flex flex-col items-center gap-6">
+              <motion.div
+                className="relative w-24 h-24"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+              >
+                <motion.div
+                  className="absolute inset-0 rounded-full border-4 border-primary/20"
+                />
+                <motion.div
+                  className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+              </motion.div>
+              <motion.p
+                className="text-lg font-semibold text-foreground"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Abriendo Tienda
+              </motion.p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {showShop && <Shop onClose={() => setShowShop(false)} />}
     </div>
@@ -697,7 +703,7 @@ const FeedContent = ({
                       
                       {/* Button */}
                       <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 flex items-center justify-center shadow-lg border-2 border-white/30">
-                        <Flame className="w-7 h-7 text-white drop-shadow-lg" />
+                        <Flame className="w-6 h-6 text-white drop-shadow-lg" />
                       </div>
                     </div>
                     <span className="text-white text-xs font-bold tracking-wide drop-shadow-md">Eat Now</span>
@@ -718,7 +724,7 @@ const FeedContent = ({
                       transition={{ duration: 0.5 }}
                     >
                       <Heart 
-                        className={`w-8 h-8 transition-colors ${
+                        className={`w-6 h-6 transition-colors ${
                           liked.includes(video.id) ? 'fill-red-500 text-red-500' : 'text-white'
                         }`}
                       />
@@ -735,7 +741,7 @@ const FeedContent = ({
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <MessageSquare className="w-8 h-8 text-white" />
+                    <MessageSquare className="w-6 h-6 text-white" />
                     <span className="text-white text-xs">{video.comments}</span>
                   </motion.button>
 
@@ -753,7 +759,7 @@ const FeedContent = ({
                       transition={{ duration: 0.6 }}
                     >
                       <Bookmark 
-                        className={`w-8 h-8 transition-colors ${
+                        className={`w-6 h-6 transition-colors ${
                           saved.includes(video.id) ? 'fill-accent text-accent' : 'text-white'
                         }`}
                       />
@@ -767,7 +773,7 @@ const FeedContent = ({
                     whileHover={{ scale: 1.1, rotate: -5 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <Share2 className="w-8 h-8 text-white" />
+                    <Share2 className="w-6 h-6 text-white" />
                   </motion.button>
 
                   {/* RiderRing replaces music spinner */}
@@ -805,7 +811,7 @@ const FeedContent = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Bell className="w-6 h-6 text-white" />
+            <Bell className="w-5 h-5 text-white" />
             <span className="text-white text-xs">Notif</span>
           </motion.button>
 
@@ -835,7 +841,7 @@ const FeedContent = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <MessageSquare className="w-6 h-6 text-white" />
+            <MessageSquare className="w-5 h-5 text-white" />
             <span className="text-white text-xs">Mensajes</span>
           </motion.button>
 
@@ -845,7 +851,7 @@ const FeedContent = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <User className="w-6 h-6 text-white" />
+            <User className="w-5 h-5 text-white" />
             <span className="text-white text-xs">Perfil</span>
           </motion.button>
         </div>
