@@ -41,8 +41,28 @@ export default defineConfig(({ mode }) => ({
 }));
 ```
 
-**2. Configuración de Vercel (`vercel.json`)**
+**2. Configuración de Vercel (`vercel.json`) - CONFIGURACIÓN CRÍTICA**
 ```json
+{
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+### ⚠️ IMPORTANTE: Por qué se usa `routes` en lugar de `rewrites`
+
+Esta configuración es **CRÍTICA** y específica para SPAs (Single Page Applications) con React Router en Vercel.
+
+**❌ Problema con `rewrites` (configuración INCORRECTA):**
+```json
+// ❌ ESTO CAUSA PANTALLA EN BLANCO EN VERCEL
 {
   "rewrites": [
     {
@@ -53,6 +73,43 @@ export default defineConfig(({ mode }) => ({
 }
 ```
 
+**¿Por qué falla con `rewrites`?**
+1. `rewrites` redirige **TODAS** las solicitudes a `index.html`, incluyendo archivos estáticos (JS, CSS, imágenes)
+2. Cuando el navegador pide `assets/main.js`, recibe HTML en lugar de JavaScript
+3. El navegador intenta ejecutar HTML como JavaScript → Error de sintaxis
+4. La aplicación no se carga → **Pantalla en blanco**
+5. El sitio puede mostrar contenido incorrecto (por ejemplo, un calendario en lugar de tu app)
+
+**✅ Solución con `routes` (configuración CORRECTA):**
+```json
+// ✅ ESTO FUNCIONA CORRECTAMENTE
+{
+  "routes": [
+    {
+      "handle": "filesystem"  // 👈 PRIMERO intenta servir archivos estáticos
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"  // 👈 SOLO si el archivo no existe, usa fallback
+    }
+  ]
+}
+```
+
+**¿Cómo funciona?**
+1. **Primera regla** (`"handle": "filesystem"`): Vercel intenta servir el recurso como archivo estático
+   - Si existe `assets/main.js` → Lo sirve directamente (status 200)
+   - Si existe `logo.png` → Lo sirve directamente
+   - Si existe cualquier archivo en `dist/` → Lo sirve directamente
+
+2. **Segunda regla** (fallback): SOLO si el recurso NO existe como archivo estático
+   - Si el usuario navega a `/auth` → No existe como archivo → Sirve `index.html`
+   - Si el usuario navega a `/homepage` → No existe como archivo → Sirve `index.html`
+   - React Router toma control y muestra el componente correcto
+
+**Documentación Oficial:**
+Esta configuración está documentada en la [guía oficial de Vercel para Client-Side Routing](https://vercel.com/docs/frameworks/react#client-side-routing).
+
 ### Cómo Funciona
 
 **En Desarrollo Local:**
@@ -61,7 +118,8 @@ export default defineConfig(({ mode }) => ({
 - No requiere configuración adicional
 
 **En Producción (Vercel):**
-- Vercel reescribe todas las rutas a `/index.html`
+- Vercel primero intenta servir archivos estáticos (JS, CSS, imágenes)
+- Solo si el recurso no existe, sirve `index.html`
 - React Router procesa las rutas del lado del cliente
 - URLs limpias sin hash (#)
 - Sin redirecciones visibles para el usuario
@@ -73,6 +131,7 @@ export default defineConfig(({ mode }) => ({
 ✅ **SEO-Friendly**: URLs limpias indexables
 ✅ **Sin Cambios en Código**: La lógica de enrutamiento permanece intacta
 ✅ **Recarga Directa**: Funciona correctamente al acceder directamente a cualquier ruta
+✅ **Assets Correctos**: JS/CSS/imágenes se sirven correctamente, no como HTML
 ✅ **Configuración Mínima**: Solo dos archivos de configuración
 
 ---
@@ -170,7 +229,10 @@ export default defineConfig(({ mode }) => ({
 **2. `vercel.json`**
 ```json
 {
-  "rewrites": [
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
@@ -178,7 +240,11 @@ export default defineConfig(({ mode }) => ({
   ]
 }
 ```
-✅ Esta configuración garantiza que todas las rutas se redirijan a `index.html`, permitiendo que React Router maneje el enrutamiento.
+✅ Esta configuración garantiza que:
+- Los archivos estáticos (JS, CSS, imágenes) se sirven correctamente
+- Las rutas se redirijan a `index.html` SOLO si no son archivos estáticos
+- React Router maneje el enrutamiento del cliente
+- No haya pantallas en blanco por assets mal servidos
 
 **3. `src/App.tsx`**
 ```typescript
@@ -214,19 +280,43 @@ export default defineConfig(({ mode }) => ({
 
 ## Problemas Potenciales y Soluciones
 
-### ⚠️ Problema 1: Rutas no funcionan después del deploy
+### ⚠️ Problema 1: Pantalla en Blanco en Vercel (PROBLEMA CRÍTICO)
 
 **Síntomas:**
-- La ruta raíz funciona
-- Otras rutas dan 404 al recargar o acceso directo
-- La navegación interna funciona pero no las URLs directas
+- La aplicación funciona localmente pero muestra pantalla en blanco en Vercel
+- La consola del navegador muestra errores de sintaxis en JavaScript
+- Network tab muestra que `assets/main.js` retorna HTML en lugar de JavaScript
+- Vercel puede mostrar contenido incorrecto (calendario, otra página)
 
 **Causa:**
-Falta el archivo `vercel.json` o está mal configurado.
+Uso incorrecto de `rewrites` en `vercel.json` que redirige TODOS los recursos (incluyendo JS/CSS) a `index.html`
+
+**Diagnóstico:**
+1. Abrir DevTools (F12) → Network tab
+2. Recargar la página
+3. Buscar archivos `.js` y `.css`
+4. Si tienen status 200 pero el Content-Type es `text/html` → Problema confirmado
 
 **Solución:**
 ```json
 // vercel.json debe estar en la raíz del proyecto
+// ✅ USAR ESTA CONFIGURACIÓN
+{
+  "routes": [
+    {
+      "handle": "filesystem"  // CRÍTICO: Primero intenta servir archivos estáticos
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+**NO usar:**
+```json
+// ❌ ESTO CAUSA PANTALLA EN BLANCO
 {
   "rewrites": [
     {
@@ -237,7 +327,30 @@ Falta el archivo `vercel.json` o está mal configurado.
 }
 ```
 
-### ⚠️ Problema 2: Assets no cargan en rutas anidadas
+**Verificación después del deploy:**
+1. Abrir DevTools → Network tab
+2. Recargar la página
+3. Verificar que archivos JS/CSS tengan Content-Type correcto:
+   - `assets/main.js` → `application/javascript` ✅
+   - `assets/main.css` → `text/css` ✅
+4. No debe haber errores de sintaxis en Console
+
+---
+
+### ⚠️ Problema 2: Rutas no funcionan después del deploy (404)
+
+**Síntomas:**
+- La ruta raíz funciona
+- Otras rutas dan 404 al recargar o acceso directo
+- La navegación interna funciona pero no las URLs directas
+
+**Causa:**
+Falta el archivo `vercel.json` o está configurado incorrectamente.
+
+**Solución:**
+Ver Problema 1 para la configuración correcta de `vercel.json`.
+
+### ⚠️ Problema 3: Assets no cargan en rutas anidadas
 
 **Síntomas:**
 - CSS no carga en `/auth` o `/homepage`
@@ -262,7 +375,7 @@ base: './', // ❌ Rutas relativas causan problemas
 base: '/nombre-repo/', // ❌ Solo para GitHub Pages
 ```
 
-### ⚠️ Problema 3: Infinite redirect loop
+### ⚠️ Problema 4: Infinite redirect loop
 
 **Síntomas:**
 - La aplicación recarga constantemente
@@ -288,7 +401,7 @@ useEffect(() => {
 }, [user, location.pathname, navigate]);
 ```
 
-### ⚠️ Problema 4: Homepage se muestra en lugar de Feed
+### ⚠️ Problema 5: Homepage se muestra en lugar de Feed
 
 **Síntomas:**
 - Al cargar la app, muestra Homepage en lugar de Feed
@@ -305,7 +418,7 @@ Configuración incorrecta de rutas en `App.tsx`.
 </Routes>
 ```
 
-### ⚠️ Problema 5: Assets importados no funcionan
+### ⚠️ Problema 6: Assets importados no funcionan
 
 **Síntomas:**
 - Imágenes importadas muestran rutas rotas
@@ -763,7 +876,7 @@ vercel --prod
 | Archivo | Configuración | Estado |
 |---------|--------------|--------|
 | `vite.config.ts` | `base: '/'` | ✅ Correcto |
-| `vercel.json` | Rewrites configurados | ✅ Correcto |
+| `vercel.json` | Routes con `filesystem` handle | ✅ Correcto (CRÍTICO) |
 | `src/App.tsx` | BrowserRouter | ✅ Correcto |
 | Rutas | `/`, `/homepage`, `/auth`, `/select-role` | ✅ Correctas |
 | Assets | ES6 imports desde `@/assets/` | ✅ Correcto |
@@ -866,14 +979,18 @@ Para rutas anidadas como `/dashboard/settings`:
 
 ## Historial de Cambios
 
-### 2025-01-23
-- ✅ Configuración inicial de Vercel con rewrites
+### 2025-01-23 (Actualización Crítica)
+- ✅ **CRÍTICO:** Migración de `rewrites` a `routes` con `filesystem` handle en `vercel.json`
+  - **Problema resuelto:** Pantalla en blanco en Vercel por assets servidos como HTML
+  - **Impacto:** Assets estáticos (JS/CSS) ahora se sirven correctamente
+  - **Resultado:** Aplicación funciona correctamente en producción Vercel
 - ✅ Configuración de `base: '/'` en vite.config.ts
 - ✅ Implementación de BrowserRouter (URLs limpias)
 - ✅ Separación de Feed (/) y Homepage (/homepage)
-- ✅ Documentación completa en pathsol.md
+- ✅ Documentación completa y actualizada en pathsol.md
 - ✅ Verificación de todos los flujos de navegación
-- ✅ Prevención de problemas comunes documentada
+- ✅ Prevención y solución de problemas comunes documentada
+- ✅ Adición de sección de diagnóstico para pantalla en blanco
 
 ### Próximas Mejoras Potenciales
 - [ ] Implementar lazy loading para rutas (React.lazy)
