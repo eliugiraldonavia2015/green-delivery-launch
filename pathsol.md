@@ -49,12 +49,17 @@ export default defineConfig(({ mode }) => ({
       "handle": "filesystem"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
 ```
+
+**⚠️ CRÍTICO - Sintaxis Actualizada de Vercel:**
+- Vercel ahora usa `src` en lugar de `source`
+- Vercel ahora usa `dest` en lugar de `destination`
+- Usar la sintaxis antigua (`source`/`destination`) causará error de validación: `routes[1] should NOT have additional property 'source'`
 
 ### ⚠️ IMPORTANTE: Por qué se usa `routes` en lugar de `rewrites`
 
