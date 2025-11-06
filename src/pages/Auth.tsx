@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Package, Mail, Lock, User as UserIcon } from "lucide-react";
+import { Package, Mail, ArrowLeft, Chrome } from "lucide-react";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Email inválido" }).max(255),
@@ -17,27 +16,37 @@ interface AuthProps {
   onComplete: () => void;
 }
 
+type AuthView = "welcome" | "email-login" | "email-signup";
+
 const Auth = ({ onComplete }: AuthProps) => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [currentView, setCurrentView] = useState<AuthView>("welcome");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleGoogleSignIn = () => {
+    setLoading(true);
+    toast.info("Redirigiendo a Google...");
+    setTimeout(() => {
+      toast.success("¡Bienvenido!");
+      onComplete();
+    }, 1500);
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const validationData = isLogin 
+      const validationData = currentView === "email-login"
         ? { email, password }
         : { email, password, fullName };
       
       authSchema.parse(validationData);
 
-      // Simulate authentication for demo purposes
       setTimeout(() => {
-        toast.success(isLogin ? "¡Bienvenido de vuelta!" : "¡Cuenta creada exitosamente!");
+        toast.success(currentView === "email-login" ? "¡Bienvenido de vuelta!" : "¡Cuenta creada!");
         onComplete();
       }, 1000);
     } catch (error) {
@@ -50,141 +59,224 @@ const Auth = ({ onComplete }: AuthProps) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-gradient-to-b from-background via-card to-background overflow-auto">
-      <div className="min-h-full flex items-center justify-center px-6 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
-        >
-          {/* Logo and header */}
-          <div className="text-center mb-8">
+  // Welcome screen
+  if (currentView === "welcome") {
+    return (
+      <div className="fixed inset-0 bg-background">
+        <div className="h-full w-full max-w-lg mx-auto flex flex-col safe-area-inset">
+          {/* Hero section */}
+          <div className="flex-1 flex flex-col items-center justify-center px-8 pb-8">
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary to-primary-glow rounded-3xl mb-6 shadow-glow"
+              transition={{ type: "spring", duration: 0.8 }}
+              className="mb-8"
             >
-              <Package className="h-10 w-10 text-white" />
+              <div className="w-28 h-28 bg-gradient-to-br from-primary to-primary-glow rounded-[2rem] flex items-center justify-center shadow-glow-lg">
+                <Package className="h-14 w-14 text-white" strokeWidth={2.5} />
+              </div>
             </motion.div>
-            <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-              {isLogin ? "¡Bienvenido!" : "Crear Cuenta"}
-            </h1>
-            <p className="text-muted-foreground text-base">
-              {isLogin 
-                ? "Ingresa para continuar tu experiencia" 
-                : "Únete a miles de usuarios"}
-            </p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center space-y-3 mb-12"
+            >
+              <h1 className="text-4xl font-bold">DeliveryApp</h1>
+              <p className="text-muted-foreground text-lg">
+                Tu comida favorita en minutos
+              </p>
+            </motion.div>
           </div>
 
-          {/* Form card */}
+          {/* Auth options */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="bg-card/50 backdrop-blur-sm border rounded-3xl p-8 shadow-2xl"
+            transition={{ delay: 0.4 }}
+            className="px-6 pb-8 space-y-3"
           >
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {!isLogin && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
-                >
-                  <Label htmlFor="fullName" className="text-sm font-medium">
-                    Nombre Completo
-                  </Label>
-                  <div className="relative">
-                    <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            {/* Google button */}
+            <Button
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              size="lg"
+              variant="outline"
+              className="w-full h-14 text-base font-semibold border-2 hover:bg-card hover:border-primary/50 transition-all duration-300 rounded-2xl"
+            >
+              <Chrome className="w-5 h-5 mr-3" />
+              Continuar con Google
+            </Button>
+
+            {/* Email button */}
+            <Button
+              onClick={() => setCurrentView("email-login")}
+              size="lg"
+              className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow transition-all duration-300 rounded-2xl"
+            >
+              <Mail className="w-5 h-5 mr-3" />
+              Continuar con Email
+            </Button>
+
+            {/* Terms */}
+            <p className="text-xs text-center text-muted-foreground pt-4 px-4">
+              Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // Email login/signup screens
+  return (
+    <div className="fixed inset-0 bg-background">
+      <div className="h-full w-full max-w-lg mx-auto flex flex-col safe-area-inset">
+        {/* Header with back button */}
+        <div className="px-6 pt-6 pb-4">
+          <button
+            onClick={() => {
+              setCurrentView("welcome");
+              setEmail("");
+              setPassword("");
+              setFullName("");
+            }}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Volver</span>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="px-8 py-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentView}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold mb-2">
+                    {currentView === "email-login" ? "Iniciar Sesión" : "Crear Cuenta"}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {currentView === "email-login"
+                      ? "Ingresa tus credenciales para continuar"
+                      : "Completa los datos para registrarte"}
+                  </p>
+                </div>
+
+                <form onSubmit={handleEmailSubmit} className="space-y-4">
+                  {currentView === "email-signup" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="space-y-2"
+                    >
+                      <label className="text-sm font-medium text-muted-foreground">
+                        Nombre Completo
+                      </label>
+                      <Input
+                        type="text"
+                        placeholder="Juan Pérez"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        required
+                        maxLength={100}
+                        className="h-12 bg-card border-border/50 rounded-xl focus:border-primary transition-colors"
+                      />
+                    </motion.div>
+                  )}
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Email
+                    </label>
                     <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="Juan Pérez"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required={!isLogin}
-                      maxLength={100}
-                      className="pl-10 h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                      type="email"
+                      placeholder="tu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      maxLength={255}
+                      className="h-12 bg-card border-border/50 rounded-xl focus:border-primary transition-colors"
                     />
                   </div>
-                </motion.div>
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="tu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    maxLength={255}
-                    className="pl-10 h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                  />
-                </div>
-              </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Contraseña
+                    </label>
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      maxLength={100}
+                      className="h-12 bg-card border-border/50 rounded-xl focus:border-primary transition-colors"
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">
-                  Contraseña
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    maxLength={100}
-                    className="pl-10 h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                  />
-                </div>
-              </div>
+                  {currentView === "email-login" && (
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </button>
+                    </div>
+                  )}
 
-              <Button
-                type="submit"
-                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow transition-all duration-300 mt-6"
-                disabled={loading}
-              >
-                {loading ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                  />
-                ) : (
-                  isLogin ? "Iniciar Sesión" : "Crear Cuenta"
-                )}
-              </Button>
-            </form>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow transition-all duration-300 rounded-2xl mt-6"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                      />
+                    ) : currentView === "email-login" ? (
+                      "Iniciar Sesión"
+                    ) : (
+                      "Crear Cuenta"
+                    )}
+                  </Button>
+                </form>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
 
-            {/* Toggle mode */}
-            <div className="mt-8 text-center">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
-              >
-                {isLogin 
-                  ? "¿No tienes cuenta? " 
-                  : "¿Ya tienes cuenta? "}
-                <span className="text-primary">
-                  {isLogin ? "Regístrate" : "Inicia sesión"}
-                </span>
-              </button>
-            </div>
-          </motion.div>
-        </motion.div>
+        {/* Footer toggle */}
+        <div className="px-8 pb-8 text-center">
+          <button
+            type="button"
+            onClick={() =>
+              setCurrentView(
+                currentView === "email-login" ? "email-signup" : "email-login"
+              )
+            }
+            className="text-sm text-muted-foreground"
+          >
+            {currentView === "email-login"
+              ? "¿No tienes cuenta? "
+              : "¿Ya tienes cuenta? "}
+            <span className="text-primary font-medium hover:underline">
+              {currentView === "email-login" ? "Regístrate" : "Inicia sesión"}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
