@@ -667,51 +667,40 @@ const FeedContent = ({
                         </motion.button>
                       )}
                     </div>
+                    
+                    {/* RiderRing - Music button below username */}
+                    <div className="mb-3">
+                      <RiderRing
+                        isPlaying={currentVideo === index}
+                        albumArt={video.profileImage}
+                        onClick={() => {
+                          setCurrentMusicInfo({ name: video.music, artist: video.username });
+                          setShowMusicPlayer(true);
+                        }}
+                      />
+                    </div>
+                    
                     <p className="text-white text-sm leading-relaxed max-w-xs">
                       {video.description}
                     </p>
-                    <div className="flex items-center gap-2">
-                      <Music className="w-4 h-4 text-white" />
-                      <p className="text-white text-xs">{video.music}</p>
-                    </div>
+                    
+                    {/* Ordenar Ahora button - below description */}
+                    <motion.button
+                      onClick={() => {
+                        setHighlightedDish(video.id);
+                        setShowMenu(true);
+                      }}
+                      className="mt-3 px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg shadow-lg transition-colors w-[85%] max-w-[280px]"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Ordenar Ahora
+                    </motion.button>
                   </div>
                 </div>
 
                 {/* Right side - Actions */}
                 <div className="flex flex-col justify-end items-center gap-6 p-4 pb-24">
-
-                  {/* Fire button - "Eat Now" */}
-                  <motion.button
-                    onClick={() => {
-                      setHighlightedDish(video.id);
-                      setShowMenu(true);
-                    }}
-                    className="flex flex-col items-center gap-1 group"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <div className="relative">
-                      {/* Animated glow effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-red-500 via-orange-500 to-red-500 rounded-full blur-md"
-                        animate={{
-                          opacity: [0.4, 0.7, 0.4],
-                          scale: [1, 1.1, 1]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      />
-                      
-                      {/* Button */}
-                      <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 flex items-center justify-center shadow-lg border-2 border-white/30">
-                        <Flame className="w-6 h-6 text-white drop-shadow-lg" />
-                      </div>
-                    </div>
-                    <span className="text-white text-xs font-bold tracking-wide drop-shadow-md">Eat Now</span>
-                  </motion.button>
 
                   {/* Like */}
                   <motion.button
@@ -779,16 +768,6 @@ const FeedContent = ({
                   >
                     <Share2 className="w-6 h-6 text-white" />
                   </motion.button>
-
-                  {/* RiderRing replaces music spinner */}
-                  <RiderRing
-                    isPlaying={currentVideo === index}
-                    albumArt={video.profileImage}
-                    onClick={() => {
-                      setCurrentMusicInfo({ name: video.music, artist: video.username });
-                      setShowMusicPlayer(true);
-                    }}
-                  />
                 </div>
               </div>
             </div>
