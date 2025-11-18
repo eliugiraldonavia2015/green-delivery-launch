@@ -668,17 +668,17 @@ const FeedContent = ({
                       )}
                     </div>
                     
-                    {/* RiderRing - Music button below username */}
-                    <div className="mb-3">
-                      <RiderRing
-                        isPlaying={currentVideo === index}
-                        albumArt={video.profileImage}
-                        onClick={() => {
-                          setCurrentMusicInfo({ name: video.music, artist: video.username });
-                          setShowMusicPlayer(true);
-                        }}
-                      />
-                    </div>
+                    {/* Music info below username - clickable */}
+                    <button
+                      onClick={() => {
+                        setCurrentMusicInfo({ name: video.music, artist: video.username });
+                        setShowMusicPlayer(true);
+                      }}
+                      className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+                    >
+                      <Music className="w-4 h-4 text-white" />
+                      <p className="text-white text-xs">{video.music}</p>
+                    </button>
                     
                     <p className="text-white text-sm leading-relaxed max-w-xs">
                       {video.description}
